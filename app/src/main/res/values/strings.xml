@@ -1,3 +1,11 @@
 <resources>
-  <string name="app_name">Qiqubaike</string>
+  <string name="app_name">奇趣百课</string>
+
+  <array name="page_title">
+    <item>精选</item>
+    <item>视频</item>
+    <item>段子</item>
+    <item>发现</item>
+    <item>奇趣专栏</item>
+  </array>
 </resources>

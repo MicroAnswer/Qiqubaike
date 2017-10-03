@@ -1,14 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.design.widget.CoordinatorLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <android.support.design.widget.AppBarLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.microanswer.qiqubaike.activity.MainActivity">
+    android:layout_height="wrap_content">
 
-  <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="Hello World!"/>
+    <ImageView
+      android:layout_width="match_parent"
+      android:layout_height="120dp"
+      android:scaleType="centerCrop"
+      android:src="@drawable/background"
+      app:layout_scrollFlags="scroll"/>
 
-</LinearLayout>
+    <android.support.design.widget.TabLayout
+      android:id="@+id/tablayout"
+      android:layout_width="match_parent"
+      app:tabMode="scrollable"
+      app:tabSelectedTextColor="@android:color/white"
+      android:layout_height="wrap_content"/>
+
+  </android.support.design.widget.AppBarLayout>
+
+
+  <!--
+  当CoordinatorLayout发现RecyclerView中定义了这个属性，
+  它会搜索自己所包含的其他view，看看是否有view与这个behavior相关联。
+  AppBarLayout.ScrollingViewBehavior描述了RecyclerView与
+  AppBarLayout之间的依赖关系。RecyclerView的任意滚动事件都将
+  触发AppBarLayout或者AppBarLayout里面view的改变。
+  AppBarLayout里面定义的view只要设置了app:layout_scrollFlags属性，
+  就可以在RecyclerView滚动事件发生的时候被触发-->
+  <android.support.v4.view.ViewPager
+    android:id="@+id/viewpager"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+
+  <android.support.design.widget.FloatingActionButton
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="end|bottom"
+    android:layout_margin="20dp"/>
+
+</android.support.design.widget.CoordinatorLayout>
