@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <!-- 顶部的用户信息 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="6dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="6dp">
+
+        <!-- 用户头像 -->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="45dp"
+            android:id="@+id/circleImageView"
+            android:layout_height="45dp"
+            android:src="@color/colorPrimary" />
+
+        <!-- 用户昵称 -->
+        <TextView
+            android:layout_width="0dp"
+            android:id="@+id/nickName"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="未知昵称"
+            android:textSize="16sp" />
+
+        <!-- 举报按钮 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:id="@+id/btn_jb"
+            android:layout_height="wrap_content"
+            android:background="@drawable/border"
+            android:padding="3dp"
+            android:text="举报"
+            android:textColor="@color/grayLight"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+    <!-- 文案内容 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="2dp"
+        android:text="看图，神评自己想想。"
+        android:textColor="@color/grayDark"
+        android:textSize="17sp" />
+
+    <!--GIF 图片-->
+    <com.cunoraz.gifview.library.GifView
+        android:id="@+id/gif"
+        android:layout_width="match_parent"
+        app:gif="@mipmap/ma"
+        android:layout_height="wrap_content" />
+
+
+    <!-- 神评论 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/background_spl"
+        android:orientation="vertical"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp">
+
+        <!-- 神评论用户信息 + 点赞按钮-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_spl" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:text="小强"
+                android:textColor="#de5025"
+                android:textSize="16sp" />
+
+            <CheckedTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:drawableLeft="@drawable/sic_zan"
+                android:gravity="center"
+                android:text="  324" />
+
+        </LinearLayout>
+
+        <!-- 神评论内容 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:maxLines="5"
+            android:text="最近天气比较凉了，有男朋友的抱男朋友，有女朋友的抱女朋友，而我就比较牛逼了，我在广东。"
+            android:textColor="#333"
+            android:textSize="16sp" />
+
+
+    </LinearLayout>
+
+    <!-- 分割线 -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="#eaeaea" />
+
+    <!-- 操作按钮 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/sic_diao"
+            android:text=" 436"
+            android:textColor="#888"
+            android:textSize="18sp" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_weight="1"
+            android:button="@drawable/sic_keng"
+            android:text=" 234"
+            android:textColor="#888"
+            android:textSize="18sp" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:button="@drawable/sic_pl"
+            android:text=" 436"
+            android:textColor="#888"
+            android:textSize="18sp" />
+
+
+    </LinearLayout>
+
+</LinearLayout>
