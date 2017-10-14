@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
@@ -21,12 +20,14 @@
 
     <!-- 用户头像 -->
     <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/circleImageView"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:src="@color/colorPrimary"/>
 
     <!-- 用户昵称 -->
     <TextView
+        android:id="@+id/nickName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="14dp"
@@ -37,11 +38,12 @@
 
     <!-- 举报按钮 -->
     <TextView
+        android:id="@+id/btn_jb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/border"
         android:padding="3dp"
-        android:text="举报"
+        android:text=" 举报 "
         android:textColor="@color/grayLight"
         android:textSize="13sp"/>
 
@@ -49,64 +51,19 @@
 
   <!-- 文案内容 -->
   <TextView
+      android:id="@+id/textContext"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:paddingBottom="2dp"
       android:paddingLeft="10dp"
       android:paddingRight="10dp"
       android:paddingTop="2dp"
-      android:text="看图，神评自己想想。"
-      android:textColor="@color/grayDark"
+      android:text="看图，神评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。"
+      android:textColor="#4e4e4e"
       android:textSize="16sp"/>
-
-  <!-- 图片内容, [使用这个布局，因为要实现图片过长的时候，收缩显示] -->
-  <answer.android.views.ExpandView
-      android:id="@+id/expandview_pic"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      app:unexpanHeight="280dp">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-      <ImageView
-          android:id="@+id/imageView"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:scaleType="fitXY"
-          android:src="@drawable/pic1"/>
-
-      <LinearLayout
-          android:id="@+id/see_more_pic"
-          android:layout_width="match_parent"
-          android:layout_height="45dp"
-          android:layout_marginTop="235dp"
-          android:background="#88000000"
-          android:gravity="center"
-          android:orientation="horizontal"
-          android:paddingBottom="5dp"
-          android:paddingTop="5dp">
-
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/scal"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="点击查看更多"
-            android:textColor="@android:color/white"/>
-
-      </LinearLayout>
-    </RelativeLayout>
-  </answer.android.views.ExpandView>
 
   <!-- 神评论 -->
   <LinearLayout
-      android:id="@+id/linearLayoutSplView"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginBottom="10dp"
@@ -133,7 +90,6 @@
           android:src="@drawable/ic_spl"/>
 
       <TextView
-          android:id="@+id/splname"
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_marginLeft="5dp"
@@ -143,7 +99,6 @@
           android:textSize="16sp"/>
 
       <LinearLayout
-          android:id="@+id/splzhan"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:background="?attr/selectableItemBackground"
@@ -151,14 +106,12 @@
           android:orientation="horizontal">
 
         <ImageView
-            android:id="@+id/splzhanicon"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:padding="3dp"
             android:src="@drawable/ic_zan"/>
 
         <TextView
-            android:id="@+id/splzancount"
             android:layout_width="wrap_content"
             android:layout_height="25dp"
             android:gravity="center"
@@ -168,7 +121,6 @@
 
     <!-- 神评论内容 -->
     <TextView
-        android:id="@+id/sqlcontent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
@@ -192,16 +144,15 @@
   <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="10dp"
       android:layout_marginLeft="5dp"
       android:layout_marginRight="5dp"
       android:layout_marginTop="10dp"
+      android:layout_marginBottom="10dp"
       android:baselineAligned="true"
       android:gravity="center_vertical"
       android:orientation="horizontal">
 
     <LinearLayout
-        android:id="@+id/linearLayoutdiao"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
@@ -209,14 +160,12 @@
         android:orientation="horizontal">
 
       <ImageView
-          android:id="@+id/diaoicon"
           android:layout_width="25dp"
           android:layout_height="25dp"
           android:padding="3dp"
           android:src="@drawable/ic_diao"/>
 
       <TextView
-          android:id="@+id/diaoCount"
           android:layout_width="wrap_content"
           android:layout_height="25dp"
           android:gravity="center"
@@ -224,36 +173,28 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/linearLayoutkeng"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
+        android:layout_weight="1"
         android:background="?attr/selectableItemBackground"
         android:clickable="true"
         android:orientation="horizontal">
 
       <ImageView
-          android:id="@+id/kengicon"
           android:layout_width="25dp"
           android:layout_height="25dp"
           android:padding="3dp"
           android:src="@drawable/ic_keng"/>
 
       <TextView
-          android:id="@+id/kengCount"
           android:layout_width="wrap_content"
           android:layout_height="25dp"
           android:gravity="center"
           android:text="253"/>
     </LinearLayout>
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
-
     <LinearLayout
-        android:id="@+id/linearLayoutpl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackground"
@@ -261,20 +202,17 @@
         android:orientation="horizontal">
 
       <ImageView
-          android:id="@+id/plicon"
           android:layout_width="25dp"
           android:layout_height="25dp"
           android:padding="3dp"
           android:src="@drawable/ic_pl"/>
 
       <TextView
-          android:id="@+id/plcount"
           android:layout_width="wrap_content"
           android:layout_height="25dp"
           android:gravity="center"
           android:text="356"/>
     </LinearLayout>
-
   </LinearLayout>
 
 </LinearLayout>

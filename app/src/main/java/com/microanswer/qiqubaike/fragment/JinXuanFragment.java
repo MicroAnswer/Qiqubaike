@@ -1,5 +1,6 @@
 package com.microanswer.qiqubaike.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,9 +8,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.microanswer.qiqubaike.R;
 
 import answer.android.views.ExpandView;
@@ -98,6 +106,8 @@ public class JinXuanFragment extends BaseFragment {
 
     class ItemHolder extends RecyclerView.ViewHolder {
 
+        protected Context context;
+
         /**
          * 头像
          */
@@ -118,15 +128,100 @@ public class JinXuanFragment extends BaseFragment {
          */
         protected TextView textContent;
 
+        /**
+         * 神评论View
+         */
+        protected LinearLayout linearLayoutSplView;
+
+        /**
+         * 神评论用户名
+         */
+        protected TextView splName;
+
+        /**
+         * 神评论点赞按钮
+         */
+        protected LinearLayout splzhan;
+
+        /**
+         * 神评论赞图标
+         */
+        protected ImageView splzanicon;
+
+        /**
+         * 神评论赞个数
+         */
+        protected TextView splzancount;
+
+        /**
+         * 神评论内容
+         */
+        protected TextView splContent;
+
+        /**
+         * 叼 按钮
+         */
+        protected LinearLayout linearLayoutdiao;
+
+        /**
+         * 叼 按钮图标
+         */
+        protected ImageView diaoicon;
+
+        /**
+         * 叼 个数
+         */
+        protected TextView diaoCount;
+
+        /**
+         * 坑 按钮
+         */
+        protected LinearLayout linearLayoutkeng;
+
+        /**
+         * 坑 图标
+         */
+        protected ImageView kengicon;
+
+        /**
+         * 坑 个数
+         */
+        protected TextView kengCount;
+
+        /**
+         * 评论按钮
+         */
+        protected LinearLayout linearLayoutpl;
+
+        /**
+         * 评论条数
+         */
+        protected TextView plCount;
+
         public ItemHolder(View itemView) {
             super(itemView);
+            context = itemView.getContext();
             headImg = (CircleImageView) findViewById(R.id.circleImageView);
             nickName = (TextView) findViewById(R.id.nickName);
             btnJB = (TextView) findViewById(R.id.btn_jb);
             textContent = (TextView) findViewById(R.id.textContext);
+            linearLayoutdiao = (LinearLayout) findViewById(R.id.linearLayoutdiao);
+            linearLayoutSplView = (LinearLayout) findViewById(R.id.linearLayoutSplView);
+            splName = (TextView) findViewById(R.id.splname);
+            splContent = (TextView) findViewById(R.id.sqlcontent);
+            splzhan = (LinearLayout) findViewById(R.id.splzhan);
+            splzanicon = (ImageView) findViewById(R.id.splzhanicon);
+            splzancount = (TextView) findViewById(R.id.splzancount);
+            diaoicon = (ImageView) findViewById(R.id.diaoicon);
+            diaoCount = (TextView) findViewById(R.id.diaoCount);
+            linearLayoutkeng = (LinearLayout) findViewById(R.id.linearLayoutkeng);
+            kengicon = (ImageView) findViewById(R.id.kengicon);
+            kengCount = (TextView) findViewById(R.id.kengCount);
+            linearLayoutpl = (LinearLayout) findViewById(R.id.linearLayoutpl);
+            plCount = (TextView) findViewById(R.id.plcount);
         }
 
-        private View findViewById(int id) {
+        protected View findViewById(int id) {
             return itemView.findViewById(id);
         }
 
@@ -179,15 +274,47 @@ public class JinXuanFragment extends BaseFragment {
         }
     }
 
-    class ItemHolderGif extends ItemHolder {
+    class ItemHolderGif extends ItemHolder implements View.OnClickListener, RequestListener<Integer, GlideDrawable> {
+
+        /**
+         * 显示GIF的View
+         */
+        private ImageView imageviewGif;
+
+        /**
+         * 播放Gif按钮
+         */
+        private LinearLayout linearLayoutplaygif;
+
+        /**
+         * gif加载提示
+         */
+        private ProgressBar gifloadprogress;
+
 
         public ItemHolderGif(View itemView) {
             super(itemView);
+            imageviewGif = (ImageView) findViewById(R.id.imageViewGif);
+            linearLayoutplaygif = (LinearLayout) findViewById(R.id.linearLayoutplaygif);
+            gifloadprogress = (ProgressBar) findViewById(R.id.gifloadprogress);
         }
 
         @Override
         ItemHolderGif bind(int position) {
             super.bind(position);
+
+            if (!linearLayoutplaygif.hasOnClickListeners()) {
+                linearLayoutplaygif.setOnClickListener(this);
+            }
+
+            // 把界面重置为有播放按钮遮罩的
+            ((ViewGroup)linearLayoutplaygif.getParent()).setVisibility(View.VISIBLE);
+            linearLayoutplaygif.setVisibility(View.VISIBLE);
+            gifloadprogress.setVisibility(View.GONE);
+
+
+            Glide.with(context).load(R.mipmap.ma).asBitmap().into(imageviewGif);
+
             return this;
         }
 
@@ -195,6 +322,34 @@ public class JinXuanFragment extends BaseFragment {
         ItemHolderGif recycled() {
             super.recycled();
             return this;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v == linearLayoutplaygif) {
+                linearLayoutplaygif.setVisibility(View.GONE);
+                gifloadprogress.setVisibility(View.VISIBLE);
+
+                Glide.with(context).load(R.mipmap.ma)
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                        .listener(this)
+                        .into(imageviewGif);
+            }
+        }
+
+        @Override
+        public boolean onException(Exception e, Integer model, Target<GlideDrawable> target, boolean isFirstResource) {
+            return false;
+        }
+
+        @Override
+        public boolean onResourceReady(GlideDrawable resource, Integer model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+
+            gifloadprogress.setVisibility(View.GONE);
+            linearLayoutplaygif.setVisibility(View.VISIBLE);
+            ((ViewGroup) linearLayoutplaygif.getParent()).setVisibility(View.GONE);
+
+            return false;
         }
     }
 }
