@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,18 @@ import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.microanswer.qiqubaike.R;
+import com.microanswer.qiqubaike.api.QiquApi;
+import com.microanswer.qiqubaike.bean.BannerItem;
+import com.microanswer.qiqubaike.bean.JinXuanItem;
+import com.microanswer.qiqubaike.other.Fun;
+import com.youth.banner.Banner;
+import com.youth.banner.BannerConfig;
+import com.youth.banner.Transformer;
+import com.youth.banner.loader.ImageLoader;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import answer.android.views.ExpandView;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -32,6 +45,9 @@ public class JinXuanFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
     private RecAdapter adapter;
+
+    private String recoid;
+    private List<JinXuanItem> items;
 
     @Nullable
     @Override
@@ -50,6 +66,18 @@ public class JinXuanFragment extends BaseFragment {
 
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
+
+        QiquApi.getJinXuanContent("").then(new Fun() {
+            @Override
+            public Object d0(Object obj) throws Throwable {
+                HashMap<String, Object> data = (HashMap<String, Object>) obj;
+
+                recoid = data.get("recoid").toString();
+                items = (List<JinXuanItem>) data.get("data");
+                adapter.notifyDataSetChanged();
+                return null;
+            }
+        }).promise();
     }
 
     class RecAdapter extends RecyclerView.Adapter<ItemHolder> {
@@ -64,6 +92,9 @@ public class JinXuanFragment extends BaseFragment {
 
         @Override
         public int getItemViewType(int position) {
+            if (0 == position) {
+                return R.layout.jinxuan_item_banner;
+            }
             if (position % 2 == 0) {
                 return R.layout.jinxuan_item_image;
             } else if (position % 5 == 0) {
@@ -88,9 +119,11 @@ public class JinXuanFragment extends BaseFragment {
                 ih = new ItemHolderGif(v);
             } else if (viewType == R.layout.jinxuan_item_text) {
                 ih = new ItemHolder(v);
+            } else if (viewType == R.layout.jinxuan_item_banner) {
+                ih = new BannerHolder(v);
             }
 
-            return ih;
+            return ih.init(parent.getContext());
         }
 
         @Override
@@ -100,7 +133,10 @@ public class JinXuanFragment extends BaseFragment {
 
         @Override
         public int getItemCount() {
-            return Integer.MAX_VALUE;
+            if (null == items) {
+                return 0;
+            }
+            return items.size();
         }
     }
 
@@ -198,27 +234,37 @@ public class JinXuanFragment extends BaseFragment {
          */
         protected TextView plCount;
 
+        protected JinXuanItem jinXuanItem;
+
         public ItemHolder(View itemView) {
             super(itemView);
-            context = itemView.getContext();
-            headImg = (CircleImageView) findViewById(R.id.circleImageView);
-            nickName = (TextView) findViewById(R.id.nickName);
-            btnJB = (TextView) findViewById(R.id.btn_jb);
-            textContent = (TextView) findViewById(R.id.textContext);
-            linearLayoutdiao = (LinearLayout) findViewById(R.id.linearLayoutdiao);
-            linearLayoutSplView = (LinearLayout) findViewById(R.id.linearLayoutSplView);
-            splName = (TextView) findViewById(R.id.splname);
-            splContent = (TextView) findViewById(R.id.sqlcontent);
-            splzhan = (LinearLayout) findViewById(R.id.splzhan);
-            splzanicon = (ImageView) findViewById(R.id.splzhanicon);
-            splzancount = (TextView) findViewById(R.id.splzancount);
-            diaoicon = (ImageView) findViewById(R.id.diaoicon);
-            diaoCount = (TextView) findViewById(R.id.diaoCount);
-            linearLayoutkeng = (LinearLayout) findViewById(R.id.linearLayoutkeng);
-            kengicon = (ImageView) findViewById(R.id.kengicon);
-            kengCount = (TextView) findViewById(R.id.kengCount);
-            linearLayoutpl = (LinearLayout) findViewById(R.id.linearLayoutpl);
-            plCount = (TextView) findViewById(R.id.plcount);
+        }
+
+        public ItemHolder init(Context context) {
+            this.context = context;
+            try {
+                headImg = (CircleImageView) findViewById(R.id.circleImageView);
+                nickName = (TextView) findViewById(R.id.nickName);
+                btnJB = (TextView) findViewById(R.id.btn_jb);
+                textContent = (TextView) findViewById(R.id.textContext);
+                linearLayoutdiao = (LinearLayout) findViewById(R.id.linearLayoutdiao);
+                linearLayoutSplView = (LinearLayout) findViewById(R.id.linearLayoutSplView);
+                splName = (TextView) findViewById(R.id.splname);
+                splContent = (TextView) findViewById(R.id.sqlcontent);
+                splzhan = (LinearLayout) findViewById(R.id.splzhan);
+                splzanicon = (ImageView) findViewById(R.id.splzhanicon);
+                splzancount = (TextView) findViewById(R.id.splzancount);
+                diaoicon = (ImageView) findViewById(R.id.diaoicon);
+                diaoCount = (TextView) findViewById(R.id.diaoCount);
+                linearLayoutkeng = (LinearLayout) findViewById(R.id.linearLayoutkeng);
+                kengicon = (ImageView) findViewById(R.id.kengicon);
+                kengCount = (TextView) findViewById(R.id.kengCount);
+                linearLayoutpl = (LinearLayout) findViewById(R.id.linearLayoutpl);
+                plCount = (TextView) findViewById(R.id.plcount);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return this;
         }
 
         protected View findViewById(int id) {
@@ -226,6 +272,21 @@ public class JinXuanFragment extends BaseFragment {
         }
 
         ItemHolder bind(int position) {
+            if (position >= 1) {
+                int posi = position - 1;
+                if (null != items && posi < items.size()) {
+                    jinXuanItem = items.get(posi);
+                }
+
+                if (jinXuanItem != null) {
+                    Glide.with(context)
+                            .load(jinXuanItem.getEditor_icon()).into(headImg);
+
+                    nickName.setText(jinXuanItem.getEditor_nickname());
+
+
+                }
+            }
             return this;
         }
 
@@ -308,7 +369,7 @@ public class JinXuanFragment extends BaseFragment {
             }
 
             // 把界面重置为有播放按钮遮罩的
-            ((ViewGroup)linearLayoutplaygif.getParent()).setVisibility(View.VISIBLE);
+            ((ViewGroup) linearLayoutplaygif.getParent()).setVisibility(View.VISIBLE);
             linearLayoutplaygif.setVisibility(View.VISIBLE);
             gifloadprogress.setVisibility(View.GONE);
 
@@ -350,6 +411,72 @@ public class JinXuanFragment extends BaseFragment {
             ((ViewGroup) linearLayoutplaygif.getParent()).setVisibility(View.GONE);
 
             return false;
+        }
+    }
+
+    class BannerHolder extends ItemHolder {
+
+        private Banner mBanner;
+
+        private List<String> imageUrls;
+        private List<String> titles;
+
+        public BannerHolder(View itemView) {
+            super(itemView);
+            imageUrls = new ArrayList<>();
+            // imageUrls.add("http://bq-img.peco.uodoo.com/qiqu/img/buz/banner/1d30b80e0bbd92a5f4cd9d5df7aef358.jpg");
+            titles = new ArrayList<>();
+            // titles.add("酒精探测仪闪红光 司机吓得大喊：刚吃了蛋黄派！");
+        }
+
+        @Override
+        public BannerHolder init(Context context) {
+            super.init(context);
+            mBanner = (Banner) itemView;
+            mBanner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE);
+            mBanner.setBannerAnimation(Transformer.DepthPage);
+            mBanner.setImageLoader(new ImageLoader() {
+                @Override
+                public void displayImage(Context context, Object path, ImageView imageView) {
+                    Glide.with(context).load(path).into(imageView);
+                }
+            });
+
+            QiquApi.getJinXuanBanner().then(new Fun() {
+                @Override
+                public Object d0(Object obj) throws Throwable {
+                    List<BannerItem> bannerItems = (List<BannerItem>) obj;
+                    // Log.i("MBanner", bannerItems.size() + "");
+                    if (bannerItems != null) {
+                        for (BannerItem bannerItem : bannerItems) {
+                            imageUrls.add(bannerItem.getImgUrl());
+                            titles.add(bannerItem.getTitle());
+                        }
+                        mBanner.setImages(imageUrls);
+                        mBanner.setBannerTitles(titles);
+                        mBanner.start();
+                    }
+                    return null;
+                }
+            }).exception(new Fun() {
+                @Override
+                public Object d0(Object obj) throws Throwable {
+                    Log.i("MBanner", obj.toString());
+                    return null;
+                }
+            }).promise();
+
+            return this;
+        }
+
+        @Override
+        ItemHolder recycled() {
+            return super.recycled();
+        }
+
+        @Override
+        ItemHolder bind(int position) {
+            return super.bind(position);
         }
     }
 }
