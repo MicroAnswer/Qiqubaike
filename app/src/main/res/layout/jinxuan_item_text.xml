@@ -57,10 +57,10 @@
       android:id="@+id/textContext"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingBottom="2dp"
+      android:paddingBottom="10dp"
       android:paddingLeft="10dp"
       android:paddingRight="10dp"
-      android:paddingTop="2dp"
+      android:paddingTop="5dp"
       android:text="看图，神评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。"
       android:textColor="#4e4e4e"
       android:textSize="16sp"/>
@@ -79,6 +79,7 @@
       android:paddingBottom="10dp"
       android:paddingLeft="10dp"
       android:paddingRight="10dp"
+      android:visibility="gone"
       android:paddingTop="5dp">
 
     <!-- 神评论用户信息 + 点赞按钮-->

@@ -1,10 +1,12 @@
 package com.microanswer.qiqubaike.fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +31,8 @@ import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
 import com.youth.banner.loader.ImageLoader;
 
+import org.xutils.common.util.DensityUtil;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +50,7 @@ public class JinXuanFragment extends BaseFragment {
     private LinearLayoutManager linearLayoutManager;
     private RecAdapter adapter;
 
-    private String recoid;
+    private String recoid = "";
     private List<JinXuanItem> items;
 
     @Nullable
@@ -66,18 +70,31 @@ public class JinXuanFragment extends BaseFragment {
 
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
+    }
 
-        QiquApi.getJinXuanContent("").then(new Fun() {
-            @Override
-            public Object d0(Object obj) throws Throwable {
-                HashMap<String, Object> data = (HashMap<String, Object>) obj;
+    private boolean isLoading = false;
 
-                recoid = data.get("recoid").toString();
-                items = (List<JinXuanItem>) data.get("data");
-                adapter.notifyDataSetChanged();
-                return null;
-            }
-        }).promise();
+    private void loadData(String recoid) {
+        if (!isLoading) {
+            isLoading = true;
+            QiquApi.getJinXuanContent(recoid).then(new Fun() {
+                @Override
+                public Object d0(Object obj) throws Throwable {
+                    HashMap<String, Object> data = (HashMap<String, Object>) obj;
+                    JinXuanFragment.this.recoid = data.get("recoid").toString();
+                    if (items == null) {
+                        items = (List<JinXuanItem>) data.get("data");
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        List<JinXuanItem> data1 = (List<JinXuanItem>) data.get("data");
+                        items.addAll(data1);
+                        adapter.notifyItemRangeChanged(items.size(), data1.size());
+                    }
+                    isLoading = false;
+                    return null;
+                }
+            }).promise();
+        }
     }
 
     class RecAdapter extends RecyclerView.Adapter<ItemHolder> {
@@ -93,14 +110,35 @@ public class JinXuanFragment extends BaseFragment {
         @Override
         public int getItemViewType(int position) {
             if (0 == position) {
+                // banner 视图始终显示
                 return R.layout.jinxuan_item_banner;
             }
-            if (position % 2 == 0) {
-                return R.layout.jinxuan_item_image;
-            } else if (position % 5 == 0) {
-                return R.layout.jinxuan_item_gif;
+
+            if (items == null || position == items.size()) {
+                // 数据还没有初始化，显示加载的ProgressBar
+                return R.layout.view_loading;
             }
-            return R.layout.jinxuan_item_text;
+            if (position - 1 < items.size()) {
+                JinXuanItem item = items.get(position - 1);
+                if (item.getItem_type() == 0) {
+                    // 图片内容【可能是静态图，可能是gif】
+                    List<JinXuanItem.Images> images = item.getImages();
+                    if (images.size() >= 1) {
+                        JinXuanItem.Images images1 = images.get(0);
+                        if ("GIF".equals(images1.getType()) || "gif".equals(images1.getType())) {
+                            return R.layout.jinxuan_item_gif;
+                        } else {
+                            return R.layout.jinxuan_item_image;
+                        }
+                    } else {
+                        // 这条内容，是图片内容，可是却没有图片
+                        return R.layout.jinxuan_item_image;
+                    }
+                } else if (item.getItem_type() == 1) {
+                    return R.layout.jinxuan_item_text;
+                }
+            }
+            return 0; // 不应该运行到这儿的
         }
 
         @Override
@@ -121,6 +159,8 @@ public class JinXuanFragment extends BaseFragment {
                 ih = new ItemHolder(v);
             } else if (viewType == R.layout.jinxuan_item_banner) {
                 ih = new BannerHolder(v);
+            } else if (viewType == R.layout.view_loading) {
+                ih = new ViewLoadingHolder(v);
             }
 
             return ih.init(parent.getContext());
@@ -134,7 +174,10 @@ public class JinXuanFragment extends BaseFragment {
         @Override
         public int getItemCount() {
             if (null == items) {
-                return 0;
+                return 2;
+            }
+            if (items.size() > 3) {
+                return items.size() + 1;
             }
             return items.size();
         }
@@ -279,12 +322,56 @@ public class JinXuanFragment extends BaseFragment {
                 }
 
                 if (jinXuanItem != null) {
-                    Glide.with(context)
-                            .load(jinXuanItem.getEditor_icon()).into(headImg);
+                    if (headImg != null)
+                        Glide.with(context).load(jinXuanItem.getEditor_icon()).into(headImg);
 
-                    nickName.setText(jinXuanItem.getEditor_nickname());
+                    if (nickName != null)
+                        nickName.setText(jinXuanItem.getEditor_nickname());
+
+                    String summary = jinXuanItem.getSummary();
+                    String title = jinXuanItem.getTitle();
+
+                    if (textContent != null) {
+                        if (TextUtils.isEmpty(summary) && !TextUtils.isEmpty(title)) {
+                            textContent.setText(title);
+                        } else if (!TextUtils.isEmpty(summary) && TextUtils.isEmpty(title)) {
+                            textContent.setText(summary);
+                        } else {
+                            textContent.setText("这个用户没有找到文案内容。");
+                        }
+                    }
+
+                    if (diaoCount != null) {
+                        diaoCount.setText(String.valueOf(jinXuanItem.getLike_cnt()));
+                    }
+
+                    if (kengCount != null) {
+                        kengCount.setText(String.valueOf(jinXuanItem.getDislike_cnt()));
+                    }
+
+                    if (plCount != null) {
+                        plCount.setText(String.valueOf(jinXuanItem.getCmt_cnt()));
+                    }
+
+                    if (linearLayoutSplView != null) {
+                        List<JinXuanItem.HotCmts> hot_cmts = jinXuanItem.getHot_cmts();
+                        if (hot_cmts != null && hot_cmts.size() > 0) {
+                            // 有神评论
+                            linearLayoutSplView.setVisibility(View.VISIBLE);
+                            JinXuanItem.HotCmts hotCmt = hot_cmts.get(0);
+
+                            if (splContent != null)
+                                splContent.setText(hotCmt.getContent());
+                            if (splName != null)
+                                splName.setText(hotCmt.getNick_name());
+                            if (splzancount != null)
+                                splzancount.setText(String.valueOf(hotCmt.getUpcnt()));
 
 
+                        } else {
+                            linearLayoutSplView.setVisibility(View.GONE);
+                        }
+                    }
                 }
             }
             return this;
@@ -296,21 +383,40 @@ public class JinXuanFragment extends BaseFragment {
 
     }
 
-    class ItemHolderImage extends ItemHolder implements View.OnClickListener {
+    class ItemHolderImage extends ItemHolder implements View.OnClickListener, RequestListener<String, Bitmap> {
 
         private ExpandView expandView;
         private LinearLayout btn_see_more_pic;
+        private ImageView image;
 
         public ItemHolderImage(View itemView) {
             super(itemView);
             expandView = (ExpandView) itemView.findViewById(R.id.expandview_pic);
             btn_see_more_pic = (LinearLayout) itemView.findViewById(R.id.see_more_pic);
+            image = (ImageView) findViewById(R.id.imageView);
         }
 
         public ItemHolderImage bind(int position) {
             super.bind(position);
             if (!btn_see_more_pic.hasOnClickListeners()) {
                 btn_see_more_pic.setOnClickListener(this);
+            }
+            btn_see_more_pic.setVisibility(View.GONE);
+
+            ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
+            layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            image.setLayoutParams(layoutParams);
+
+            if (jinXuanItem != null) {
+
+                List<JinXuanItem.Images> images = jinXuanItem.getImages();
+
+                if (images != null && images.size() > 0) {
+                    JinXuanItem.Images images1 = images.get(0);
+                    Glide.with(context).load(images1.getUrl()).asBitmap().listener(this).into(image);
+                    return this;
+                }
+
             }
             return this;
         }
@@ -333,9 +439,30 @@ public class JinXuanFragment extends BaseFragment {
             }
             return this;
         }
+
+        @Override
+        public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+            return false;
+        }
+
+        @Override
+        public boolean onResourceReady(Bitmap resource, String model, final Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+            ImageView imageView = image;
+            // ViewGroup.LayoutParams params = imageView.getLayoutParams();
+            int vw = imageView.getWidth();
+            float scale = resource.getHeight() / (float) resource.getWidth();
+            int vh = Math.round(vw * scale);
+            // params.height = vh + imageView.getPaddingTop() + imageView.getPaddingBottom();
+            // imageView.setLayoutParams(params);
+            int intrinsicHeight = vh + imageView.getPaddingTop() + imageView.getPaddingBottom();
+            if (intrinsicHeight > DensityUtil.dip2px(280f)) {
+                btn_see_more_pic.setVisibility(View.VISIBLE);
+            }
+            return false;
+        }
     }
 
-    class ItemHolderGif extends ItemHolder implements View.OnClickListener, RequestListener<Integer, GlideDrawable> {
+    class ItemHolderGif extends ItemHolder implements View.OnClickListener, RequestListener<String, GlideDrawable> {
 
         /**
          * 显示GIF的View
@@ -352,6 +479,8 @@ public class JinXuanFragment extends BaseFragment {
          */
         private ProgressBar gifloadprogress;
 
+        private String url;
+        private Bitmap coverBitmap;
 
         public ItemHolderGif(View itemView) {
             super(itemView);
@@ -373,9 +502,20 @@ public class JinXuanFragment extends BaseFragment {
             linearLayoutplaygif.setVisibility(View.VISIBLE);
             gifloadprogress.setVisibility(View.GONE);
 
+            if (jinXuanItem != null) {
 
+                List<JinXuanItem.Images> images = jinXuanItem.getImages();
+
+                if (images != null && images.size() > 0) {
+                    JinXuanItem.Images images1 = images.get(0);
+                    url = images1.getUrl();
+                    Glide.with(context).load(url).asBitmap().into(imageviewGif);
+                    // Log.i("JinXuanFragment", into.getClass().getName());
+                    return this;
+                }
+
+            }
             Glide.with(context).load(R.mipmap.ma).asBitmap().into(imageviewGif);
-
             return this;
         }
 
@@ -391,21 +531,23 @@ public class JinXuanFragment extends BaseFragment {
                 linearLayoutplaygif.setVisibility(View.GONE);
                 gifloadprogress.setVisibility(View.VISIBLE);
 
-                Glide.with(context).load(R.mipmap.ma)
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .listener(this)
-                        .into(imageviewGif);
+                if (!TextUtils.isEmpty(url)) {
+                    Glide.with(context).load(url)
+                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                            .placeholder(imageviewGif.getDrawable())
+                            .listener(this)
+                            .into(imageviewGif);
+                }
             }
         }
 
         @Override
-        public boolean onException(Exception e, Integer model, Target<GlideDrawable> target, boolean isFirstResource) {
+        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
             return false;
         }
 
         @Override
-        public boolean onResourceReady(GlideDrawable resource, Integer model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-
+        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
             gifloadprogress.setVisibility(View.GONE);
             linearLayoutplaygif.setVisibility(View.VISIBLE);
             ((ViewGroup) linearLayoutplaygif.getParent()).setVisibility(View.GONE);
@@ -477,6 +619,20 @@ public class JinXuanFragment extends BaseFragment {
         @Override
         ItemHolder bind(int position) {
             return super.bind(position);
+        }
+    }
+
+    class ViewLoadingHolder extends ItemHolder {
+
+        public ViewLoadingHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        ItemHolder bind(int position) {
+            super.bind(position);
+            loadData(recoid);
+            return this;
         }
     }
 }
