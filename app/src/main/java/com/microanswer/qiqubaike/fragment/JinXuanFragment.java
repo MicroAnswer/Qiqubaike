@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -44,11 +45,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Micro on 2017-10-3.
  */
 
-public class JinXuanFragment extends BaseFragment {
+public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
     private RecAdapter adapter;
+    private SwipeRefreshLayout swiperefreshlayout;
 
     private String recoid = "";
     private List<JinXuanItem> items;
@@ -64,6 +66,8 @@ public class JinXuanFragment extends BaseFragment {
         super.onViewCreated(view, savedInstanceState);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerview);
+        swiperefreshlayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefreshlayout);
+        swiperefreshlayout.setOnRefreshListener(this);
 
         linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         adapter = new RecAdapter();
@@ -74,15 +78,15 @@ public class JinXuanFragment extends BaseFragment {
 
     private boolean isLoading = false;
 
-    private void loadData(String recoid) {
+    private void loadData(final String recoid) {
         if (!isLoading) {
             isLoading = true;
             QiquApi.getJinXuanContent(recoid).then(new Fun() {
                 @Override
                 public Object d0(Object obj) throws Throwable {
                     HashMap<String, Object> data = (HashMap<String, Object>) obj;
-                    JinXuanFragment.this.recoid = data.get("recoid").toString();
-                    if (items == null) {
+                    // String result = data.get("orign").toString();
+                    if (items == null || TextUtils.isEmpty(recoid)) {
                         items = (List<JinXuanItem>) data.get("data");
                         adapter.notifyDataSetChanged();
                     } else {
@@ -90,11 +94,23 @@ public class JinXuanFragment extends BaseFragment {
                         items.addAll(data1);
                         adapter.notifyItemRangeChanged(items.size(), data1.size());
                     }
+                    JinXuanFragment.this.recoid = data.get("recoid").toString();
+                    swiperefreshlayout.setRefreshing(false);
                     isLoading = false;
+                    // AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
+                    //         .setMessage(result).setPositiveButton("确定",null).create();
+                    // alertDialog.show();
                     return null;
                 }
             }).promise();
         }
+    }
+
+    @Override
+    public void onRefresh() {
+        recoid = "";
+        swiperefreshlayout.setRefreshing(true);
+        loadData(recoid);
     }
 
     class RecAdapter extends RecyclerView.Adapter<ItemHolder> {
@@ -338,6 +354,7 @@ public class JinXuanFragment extends BaseFragment {
                             textContent.setText(summary);
                         } else {
                             textContent.setText("这个用户没有找到文案内容。");
+                            Log.i("JinXuanItem", jinXuanItem.toString());
                         }
                     }
 
@@ -383,7 +400,7 @@ public class JinXuanFragment extends BaseFragment {
 
     }
 
-    class ItemHolderImage extends ItemHolder implements View.OnClickListener, RequestListener<String, Bitmap> {
+    class ItemHolderImage extends ItemHolder implements View.OnClickListener, RequestListener<String, GlideDrawable> {
 
         private ExpandView expandView;
         private LinearLayout btn_see_more_pic;
@@ -413,7 +430,7 @@ public class JinXuanFragment extends BaseFragment {
 
                 if (images != null && images.size() > 0) {
                     JinXuanItem.Images images1 = images.get(0);
-                    Glide.with(context).load(images1.getUrl()).asBitmap().listener(this).into(image);
+                    Glide.with(context).load(images1.getUrl()).listener(this).into(image);
                     return this;
                 }
 
@@ -441,24 +458,38 @@ public class JinXuanFragment extends BaseFragment {
         }
 
         @Override
-        public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
             return false;
         }
 
         @Override
-        public boolean onResourceReady(Bitmap resource, String model, final Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-            ImageView imageView = image;
+        public boolean onResourceReady(GlideDrawable resource, String model, final Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+            // ImageView imageView = image;
             // ViewGroup.LayoutParams params = imageView.getLayoutParams();
-            int vw = imageView.getWidth();
-            float scale = resource.getHeight() / (float) resource.getWidth();
-            int vh = Math.round(vw * scale);
+            // int vw = imageView.getWidth();
+            // float scale = resource.getHeight() / (float) resource.getWidth();
+            // int vh = Math.round(vw * scale);
             // params.height = vh + imageView.getPaddingTop() + imageView.getPaddingBottom();
             // imageView.setLayoutParams(params);
-            int intrinsicHeight = vh + imageView.getPaddingTop() + imageView.getPaddingBottom();
+            // int intrinsicHeight = vh + imageView.getPaddingTop() + imageView.getPaddingBottom();
+
+            image.setImageDrawable(resource);
+
+            int he = image.getHeight();
+
+            image.measure(View.MeasureSpec.makeMeasureSpec(image.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
+                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+            he = image.getMeasuredHeight();
+            ViewGroup.LayoutParams params = image.getLayoutParams();
+            params.height = he;
+            image.setLayoutParams(params);
+
+            // Log.i("JinXuanItem", String.valueOf(image.getHeight()));
+            int intrinsicHeight = he;
             if (intrinsicHeight > DensityUtil.dip2px(280f)) {
                 btn_see_more_pic.setVisibility(View.VISIBLE);
             }
-            return false;
+            return true;
         }
     }
 
@@ -536,6 +567,7 @@ public class JinXuanFragment extends BaseFragment {
                             .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                             .placeholder(imageviewGif.getDrawable())
                             .listener(this)
+                            .dontAnimate()
                             .into(imageviewGif);
                 }
             }
@@ -576,7 +608,7 @@ public class JinXuanFragment extends BaseFragment {
             super.init(context);
             mBanner = (Banner) itemView;
             mBanner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE_INSIDE);
-            mBanner.setBannerAnimation(Transformer.DepthPage);
+            mBanner.setBannerAnimation(Transformer.Default);
             mBanner.setImageLoader(new ImageLoader() {
                 @Override
                 public void displayImage(Context context, Object path, ImageView imageView) {

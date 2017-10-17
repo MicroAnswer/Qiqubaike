@@ -59,6 +59,7 @@
       android:paddingBottom="10dp"
       android:paddingLeft="10dp"
       android:id="@+id/textContext"
+      android:lineSpacingExtra="6dp"
       android:paddingRight="10dp"
       android:paddingTop="5dp"
       android:text="看图，神评自己想想。"

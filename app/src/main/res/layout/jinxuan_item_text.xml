@@ -53,6 +53,7 @@
   </LinearLayout>
 
   <!-- 文案内容 -->
+
   <TextView
       android:id="@+id/textContext"
       android:layout_width="match_parent"
@@ -60,6 +61,7 @@
       android:paddingBottom="10dp"
       android:paddingLeft="10dp"
       android:paddingRight="10dp"
+      android:lineSpacingExtra="6dp"
       android:paddingTop="5dp"
       android:text="看图，神评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。评自己想想。"
       android:textColor="#4e4e4e"

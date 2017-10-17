@@ -58,6 +58,7 @@
         android:layout_height="wrap_content"
         android:paddingBottom="10dp"
         android:paddingLeft="10dp"
+        android:lineSpacingExtra="6dp"
         android:paddingRight="10dp"
         android:id="@+id/textContext"
         android:paddingTop="5dp"

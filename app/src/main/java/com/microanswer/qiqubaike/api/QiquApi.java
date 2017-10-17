@@ -1,6 +1,7 @@
 package com.microanswer.qiqubaike.api;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -83,6 +84,7 @@ public class QiquApi {
                 String result = x.http().requestSync(HttpMethod.GET, requestParams, String.class);
 
                 JSONObject jsonObject = JSON.parseObject(result);
+
                 if ("ok".equals(jsonObject.getString("message"))) {
                     JSONObject data = jsonObject.getJSONObject("data");
                     String recoid = data.getString("recoid");
@@ -90,13 +92,20 @@ public class QiquApi {
                     JSONObject articles = data.getJSONObject("articles");
                     List<JinXuanItem> articleBeans = new ArrayList<>();
                     for (int i = 0; i < items.size(); i++) {
-                        JSONObject item = items.getJSONObject(i);
-                        articleBeans.add(JSON.parseObject(articles.getJSONObject(item.getString("id")).toJSONString(), JinXuanItem.class));
+                        JSONObject objectitems = items.getJSONObject(i);
+                        JSONObject item = articles.getJSONObject(objectitems.getString("id"));
+                        // Log.i("JSON", item.toJSONString());
+                        JinXuanItem jinXuanItem = JSON.parseObject(item.toJSONString(), JinXuanItem.class);
+                        if (!TextUtils.isEmpty(jinXuanItem.getSummary()) || !TextUtils.isEmpty(jinXuanItem.getTitle())) {
+                            // 不知道为什么,有些条目明明是文案类型,可就是没有文案,过滤这种的
+                            articleBeans.add(jinXuanItem);
+                        }
                     }
 
                     Map<String, Object> d = new HashMap<>();
                     d.put("recoid", recoid);
                     d.put("data", articleBeans);
+                    // d.put("orign", jsonObject.toString());
                     return d;
                 }
                 return null;
