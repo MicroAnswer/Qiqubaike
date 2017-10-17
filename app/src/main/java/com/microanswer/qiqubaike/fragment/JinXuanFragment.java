@@ -2,6 +2,7 @@ package com.microanswer.qiqubaike.fragment;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -473,23 +474,23 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
             // imageView.setLayoutParams(params);
             // int intrinsicHeight = vh + imageView.getPaddingTop() + imageView.getPaddingBottom();
 
-            image.setImageDrawable(resource);
-
-            int he = image.getHeight();
-
-            image.measure(View.MeasureSpec.makeMeasureSpec(image.getMeasuredWidth(), View.MeasureSpec.EXACTLY),
-                    View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-            he = image.getMeasuredHeight();
             ViewGroup.LayoutParams params = image.getLayoutParams();
-            params.height = he;
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             image.setLayoutParams(params);
 
-            // Log.i("JinXuanItem", String.valueOf(image.getHeight()));
-            int intrinsicHeight = he;
-            if (intrinsicHeight > DensityUtil.dip2px(280f)) {
+
+            int width = image.getWidth();
+            Rect rect = resource.copyBounds();
+            int rWidth = rect.width();
+            int rHeight = rect.height();
+
+            int he = Math.round(width * (rHeight / (float) rWidth));
+
+             Log.i("JinXuanItem", "");
+            if (he > DensityUtil.dip2px(280f)) {
                 btn_see_more_pic.setVisibility(View.VISIBLE);
             }
-            return true;
+            return false;
         }
     }
 
