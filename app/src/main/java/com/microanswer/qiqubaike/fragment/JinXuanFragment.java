@@ -2,7 +2,6 @@ package com.microanswer.qiqubaike.fragment;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -38,6 +37,7 @@ import org.xutils.common.util.DensityUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import answer.android.views.ExpandView;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -378,8 +378,10 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
                             linearLayoutSplView.setVisibility(View.VISIBLE);
                             JinXuanItem.HotCmts hotCmt = hot_cmts.get(0);
 
-                            if (splContent != null)
+                            if (splContent != null) {
                                 splContent.setText(hotCmt.getContent());
+                                // Log.i("JinXuanItem", hotCmt.getContent());
+                            }
                             if (splName != null)
                                 splName.setText(hotCmt.getNick_name());
                             if (splzancount != null)
@@ -398,6 +400,7 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
         ItemHolder recycled() {
             return this;
         }
+
 
     }
 
@@ -465,28 +468,26 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
 
         @Override
         public boolean onResourceReady(GlideDrawable resource, String model, final Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-            // ImageView imageView = image;
-            // ViewGroup.LayoutParams params = imageView.getLayoutParams();
-            // int vw = imageView.getWidth();
-            // float scale = resource.getHeight() / (float) resource.getWidth();
-            // int vh = Math.round(vw * scale);
-            // params.height = vh + imageView.getPaddingTop() + imageView.getPaddingBottom();
-            // imageView.setLayoutParams(params);
-            // int intrinsicHeight = vh + imageView.getPaddingTop() + imageView.getPaddingBottom();
+            int resourceWidth = resource.getIntrinsicWidth();
+            int resourceHeight = resource.getIntrinsicHeight();
 
-            ViewGroup.LayoutParams params = image.getLayoutParams();
-            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            image.setLayoutParams(params);
-
+            // Log.i("JinXuanItem", "resourceWidth:" + resourceWidth + ", resourceHeight:" + resourceHeight);
+            // Log.i("JinXuanItem", "imageWidth:" + image.getWidth() + ", imageHeight:" + image.getHeight());
 
             int width = image.getWidth();
-            Rect rect = resource.copyBounds();
-            int rWidth = rect.width();
-            int rHeight = rect.height();
 
-            int he = Math.round(width * (rHeight / (float) rWidth));
+            int he = Math.round(width * (resourceHeight / (float) resourceWidth));
 
-             Log.i("JinXuanItem", "");
+
+            ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
+            layoutParams.height = he;
+            image.setLayoutParams(layoutParams);
+            image.invalidate();
+
+            // Log.i("JinXuanItem", "layoutParam ==> imageWidth:" + image.getWidth() + ", imageHeight:" + image.getHeight());
+            // Log.i("JinXuanItem", "应该高度:" + he);
+            // Log.i("JinXuanItem", "...");
+
             if (he > DensityUtil.dip2px(280f)) {
                 btn_see_more_pic.setVisibility(View.VISIBLE);
             }
