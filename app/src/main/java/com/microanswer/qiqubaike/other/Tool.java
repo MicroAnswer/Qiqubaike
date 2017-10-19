@@ -1,51 +1,106 @@
 package com.microanswer.qiqubaike.other;
 
+import android.content.Context;
+import android.content.res.AssetManager;
+import android.graphics.BitmapFactory;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.TextUtils;
+import android.text.style.ImageSpan;
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Microanswer on 2017/10/18.
  */
 
 public class Tool {
-    private static Map<String, Integer> EMJ_MAP = new HashMap<>();
+    private static Map<String, String> EMJ_MAP = null;
+    private static Pattern pattern = Pattern.compile("\\[(([-+]?[1])|(\\w*))\\]");
 
     static {
-        EMJ_MAP.put("", 0X1F601); // 呲牙笑
-        EMJ_MAP.put("", 0X1F602); // 笑哭
-        EMJ_MAP.put("", 0X1F603); // 笑
-        EMJ_MAP.put("", 0X1F604); // 大笑
-        EMJ_MAP.put("", 0X1F605); // 笑汗
-        EMJ_MAP.put("", 0X1F606); // 笑斗鸡眼
-        EMJ_MAP.put("", 0X1F609); // 眨眼笑
-        EMJ_MAP.put("", 0X1F60A); // 腮红笑
-        EMJ_MAP.put("", 0X1F60B); // 吐舌头
-        EMJ_MAP.put("", 0X1F60C); // 闭眼
-        EMJ_MAP.put("", 0X1F60D); // 色
-        EMJ_MAP.put("", 0X1F60F); // 斜嘴
-        EMJ_MAP.put("", 0X1F612); // 斜眼
-        EMJ_MAP.put("", 0X1F613); // 汗
-        EMJ_MAP.put("", 0X1F614); // 委屈
-        EMJ_MAP.put("", 0X1F616); // 超级委屈
-        EMJ_MAP.put("", 0X1F618); // 飞吻
-        EMJ_MAP.put("", 0X1F61A); // 亲亲
-        EMJ_MAP.put("", 0X1F61C); // 眨眼吐舌头
-        EMJ_MAP.put("", 0X1F61D); // 斗鸡眼吐舌头
-        EMJ_MAP.put("", 0X1F61E); // 难过
+        if (EMJ_MAP == null) {
+            EMJ_MAP = new HashMap<>();
+        }
+
+        if (EMJ_MAP.size() < 1) {
+            EMJ_MAP.put("[grin]", "01");
+            EMJ_MAP.put("[scream]", "02");
+            EMJ_MAP.put("[triumph]", "03");
+            EMJ_MAP.put("[kissing_face]", "04");
+            EMJ_MAP.put("[smirk]", "05");
+            EMJ_MAP.put("[satisfied]", "06");
+            EMJ_MAP.put("[sunglasses]", "07");
+            EMJ_MAP.put("[sleepy]", "08");
+            EMJ_MAP.put("[praise]", "09");
+            EMJ_MAP.put("[trample]", "10");
+            EMJ_MAP.put("[doge1]", "11");
+            EMJ_MAP.put("[doge2]", "12");
+            EMJ_MAP.put("[heart_eyes]", "13");
+            EMJ_MAP.put("[big_eyes]", "14");
+            EMJ_MAP.put("[thiking]", "15");
+            EMJ_MAP.put("[slap]", "16");
+            EMJ_MAP.put("[blush]", "17");
+            EMJ_MAP.put("[smile]", "18");
+            EMJ_MAP.put("[byebye]", "19");
+            EMJ_MAP.put("[throwup]", "20");
+            EMJ_MAP.put("[begging]", "21");
+            EMJ_MAP.put("[sob]", "22");
+            EMJ_MAP.put("[sleeping]", "23");
+            EMJ_MAP.put("[awkward]", "24");
+            EMJ_MAP.put("[screaming]", "25");
+            EMJ_MAP.put("[tittering]", "26");
+            EMJ_MAP.put("[despise]", "27");
+            EMJ_MAP.put("[nose]", "28");
+            EMJ_MAP.put("[candle]", "29");
+            EMJ_MAP.put("[plane]", "30");
+            EMJ_MAP.put("[dlam]", "31");
+            EMJ_MAP.put("[xjj_mengbi]", "33");
+            EMJ_MAP.put("[ward]", "34");
+        }
     }
 
     /**
-     * 更具文本内容中 [doge1] 这一类型的文本 获取其对应的表情图
+     * 格式化神评论或则文案内容, 因为这些内容可能有图片表情
      *
      * @param text
      * @return
      */
-    private String getEmojString(String text) {
-        Integer integer = EMJ_MAP.get(text);
-        if (integer == null) {
-            integer = 0;
+    public static SpannableString formatUcText(Context context, String text) {
+        Matcher m = pattern.matcher(text);
+
+        // Log.i("Pattern", text);
+        SpannableString spannableString = new SpannableString(text);
+        int indexStart = 0;
+        while (m.find()) {
+            // 匹配到
+            String match = m.group();
+            // Log.i("Pattern", match);
+            // 获取对应路径
+            String path = EMJ_MAP.get(match);
+            if (TextUtils.isEmpty(path)) {
+                path = "01";
+            }
+            path = "ucemoj/w_" + path + ".png";
+
+            try {
+                AssetManager assets = context.getAssets();
+                ImageSpan imageSpan = new ImageSpan(context, BitmapFactory.decodeStream(assets.open(path)));
+
+                indexStart = text.indexOf(match, indexStart);
+                int indexEnd = indexStart + match.length();
+                spannableString.setSpan(imageSpan, indexStart, indexEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                indexStart++;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        return getEmojiStringByUnicode(integer);
+        // Log.i("Pattern", "-----------------");
+        return spannableString;
     }
 
     /**

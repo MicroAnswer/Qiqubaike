@@ -27,6 +27,7 @@ import com.microanswer.qiqubaike.api.QiquApi;
 import com.microanswer.qiqubaike.bean.BannerItem;
 import com.microanswer.qiqubaike.bean.JinXuanItem;
 import com.microanswer.qiqubaike.other.Fun;
+import com.microanswer.qiqubaike.other.Tool;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.Transformer;
@@ -37,7 +38,6 @@ import org.xutils.common.util.DensityUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import answer.android.views.ExpandView;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -379,7 +379,7 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
                             JinXuanItem.HotCmts hotCmt = hot_cmts.get(0);
 
                             if (splContent != null) {
-                                splContent.setText(hotCmt.getContent());
+                                splContent.setText(Tool.formatUcText(context, hotCmt.getContent()));
                                 // Log.i("JinXuanItem", hotCmt.getContent());
                             }
                             if (splName != null)
