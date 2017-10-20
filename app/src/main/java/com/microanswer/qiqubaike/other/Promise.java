@@ -41,7 +41,7 @@ public class Promise {
      * 出发运行
      */
     public void promise() {
-        Log.i("Promise", "开始运行");
+        // Log.i("Promise", "开始运行");
         x.task().run(runnable);
     }
 
@@ -77,6 +77,7 @@ public class Promise {
         public void run() {
             if (then != null && then.then != null) {
                 // 如果有下一个任务 且 下一个任务也有下一个任务， 将此下一个任务运行在后台
+                then.param(returnData);
                 then.promise();
             } else if (then != null) {
                 // 如果有下一个任务 且 下一个任务没有下一个任务了， 那么下一个任务在主线程执行/
