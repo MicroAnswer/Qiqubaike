@@ -424,13 +424,19 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
             }
             btn_see_more_pic.setVisibility(View.GONE);
 
+            image.setImageDrawable(null);
+
             if (jinXuanItem != null) {
 
                 List<JinXuanItem.Images> images = jinXuanItem.getImages();
+                ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
+                layoutParams.height = 1;
+                image.setLayoutParams(layoutParams);
+
 
                 if (images != null && images.size() > 0) {
                     JinXuanItem.Images images1 = images.get(0);
-                    Glide.with(context).load(images1.getUrl()).placeholder(R.drawable.picload).listener(this).into(image);
+                    Glide.with(context).load(images1.getUrl()).listener(this).into(image);
                     return this;
                 }
 
@@ -464,17 +470,16 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
 
         @Override
         public boolean onResourceReady(final GlideDrawable resource, String model, final Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+            int resourceWidth = resource.getIntrinsicWidth();
+            int resourceHeight = resource.getIntrinsicHeight();
+
+            int width = image.getWidth();
+
+            final int he = Math.round(width * (resourceHeight / (float) resourceWidth));
+
             image.post(new Runnable() {
                 @Override
                 public void run() {
-
-                    int resourceWidth = resource.getIntrinsicWidth();
-                    int resourceHeight = resource.getIntrinsicHeight();
-
-                    int width = image.getWidth();
-
-                    int he = Math.round(width * (resourceHeight / (float) resourceWidth));
-
 
                     ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
                     layoutParams.height = he;
