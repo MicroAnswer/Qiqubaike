@@ -12,9 +12,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -58,7 +60,8 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.frag_jin_xuan, container, false);
     }
 
@@ -70,7 +73,8 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
         swiperefreshlayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefreshlayout);
         swiperefreshlayout.setOnRefreshListener(this);
 
-        linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        linearLayoutManager = new LinearLayoutManager(getContext(),
+                LinearLayoutManager.VERTICAL, false);
         adapter = new RecAdapter();
 
         recyclerView.setLayoutManager(linearLayoutManager);
@@ -294,6 +298,11 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
          */
         protected TextView plCount;
 
+        /**
+         *  分享按钮
+         */
+        protected LinearLayout getLinearLayoutshare;
+
         protected JinXuanItem jinXuanItem;
 
         public ItemHolder(View itemView) {
@@ -321,6 +330,7 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
                 kengCount = (TextView) findViewById(R.id.kengCount);
                 linearLayoutpl = (LinearLayout) findViewById(R.id.linearLayoutpl);
                 plCount = (TextView) findViewById(R.id.plcount);
+                getLinearLayoutshare = (LinearLayout) findViewById(R.id.linearLayoutshare);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -404,7 +414,7 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
 
     }
 
-    class ItemHolderImage extends ItemHolder implements View.OnClickListener, RequestListener<String, GlideDrawable> {
+    class ItemHolderImage extends ItemHolder implements View.OnClickListener {
 
         private ExpandView expandView;
         private LinearLayout btn_see_more_pic;
@@ -428,15 +438,28 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
 
             if (jinXuanItem != null) {
 
-                List<JinXuanItem.Images> images = jinXuanItem.getImages();
-                ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
-                layoutParams.height = 1;
-                image.setLayoutParams(layoutParams);
-
-
+                final List<JinXuanItem.Images> images = jinXuanItem.getImages();
                 if (images != null && images.size() > 0) {
-                    JinXuanItem.Images images1 = images.get(0);
-                    Glide.with(context).load(images1.getUrl()).listener(this).into(image);
+                    image.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            JinXuanItem.Images images1 = images.get(0);
+
+                            int heigsht = images1.getHeight();
+                            int widtsh = images1.getWidth();
+                            int width = image.getWidth();
+                            int he = Math.round(width * (heigsht / (float) widtsh));
+                            if (he > DensityUtil.dip2px(350f)) {
+                                btn_see_more_pic.setVisibility(View.VISIBLE);
+                            }
+
+                            ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
+                            layoutParams.height = he;
+                            image.setLayoutParams(layoutParams);
+
+                            Glide.with(context).load(images1.getUrl()).asBitmap().into(image);
+                        }
+                    });
                     return this;
                 }
 
@@ -462,41 +485,10 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
             }
             return this;
         }
-
-        @Override
-        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-            return false;
-        }
-
-        @Override
-        public boolean onResourceReady(final GlideDrawable resource, String model, final Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-            int resourceWidth = resource.getIntrinsicWidth();
-            int resourceHeight = resource.getIntrinsicHeight();
-
-            int width = image.getWidth();
-
-            final int he = Math.round(width * (resourceHeight / (float) resourceWidth));
-
-            image.post(new Runnable() {
-                @Override
-                public void run() {
-
-                    ViewGroup.LayoutParams layoutParams = image.getLayoutParams();
-                    layoutParams.height = he;
-                    image.setLayoutParams(layoutParams);
-
-                    if (he > DensityUtil.dip2px(280f)) {
-                        btn_see_more_pic.setVisibility(View.VISIBLE);
-                    }
-
-                }
-            });
-
-            return false;
-        }
     }
 
-    class ItemHolderGif extends ItemHolder implements View.OnClickListener, RequestListener<String, GlideDrawable> {
+    class ItemHolderGif extends ItemHolder implements View.OnClickListener,
+            RequestListener<String, GlideDrawable> {
 
         /**
          * 显示GIF的View
@@ -577,12 +569,15 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
         }
 
         @Override
-        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+        public boolean onException(Exception e, String model, Target<GlideDrawable> target,
+                                   boolean isFirstResource) {
             return false;
         }
 
         @Override
-        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+        public boolean onResourceReady(GlideDrawable resource, String model,
+                                       Target<GlideDrawable> target, boolean isFromMemoryCache,
+                                       boolean isFirstResource) {
             gifloadprogress.setVisibility(View.GONE);
             linearLayoutplaygif.setVisibility(View.VISIBLE);
             ((ViewGroup) linearLayoutplaygif.getParent()).setVisibility(View.GONE);
@@ -601,9 +596,7 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
         public BannerHolder(View itemView) {
             super(itemView);
             imageUrls = new ArrayList<>();
-            // imageUrls.add("http://bq-img.peco.uodoo.com/qiqu/img/buz/banner/1d30b80e0bbd92a5f4cd9d5df7aef358.jpg");
             titles = new ArrayList<>();
-            // titles.add("酒精探测仪闪红光 司机吓得大喊：刚吃了蛋黄派！");
         }
 
         @Override
@@ -659,13 +652,28 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
 
     class ViewLoadingHolder extends ItemHolder {
 
+        private ImageView load_view;
+
         public ViewLoadingHolder(View itemView) {
             super(itemView);
         }
 
         @Override
+        public ItemHolder init(Context context) {
+            super.init(context);
+
+            load_view = (ImageView) findViewById(R.id.load_view);
+
+            return this;
+        }
+
+        @Override
         ItemHolder bind(int position) {
             super.bind(position);
+            Glide.with(context).load(R.drawable.uc_loading)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .dontAnimate()
+                    .into(load_view);
             loadData(recoid);
             return this;
         }

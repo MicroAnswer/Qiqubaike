@@ -1,291 +1,311 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginBottom="5dp"
-              android:layout_marginLeft="10dp"
-              android:layout_marginRight="10dp"
-              android:layout_marginTop="5dp"
-              android:background="@android:color/white"
-              android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:layout_marginTop="5dp"
+    android:background="@android:color/white"
+    android:orientation="vertical">
 
-  <!-- 顶部的用户信息 -->
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:gravity="center_vertical"
-      android:orientation="horizontal"
-      android:paddingBottom="6dp"
-      android:paddingLeft="10dp"
-      android:paddingRight="10dp"
-      android:paddingTop="6dp">
-
-    <!-- 用户头像 -->
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/circleImageView"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:src="@color/colorPrimary"/>
-
-    <!-- 用户昵称 -->
-    <TextView
-        android:id="@+id/nickName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="14dp"
-        android:layout_weight="1"
-        android:maxLines="1"
-        android:text="未知昵称"
-        android:textSize="16sp"/>
-
-    <!-- 举报按钮 -->
-    <TextView
-        android:id="@+id/btn_jb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border"
-        android:padding="3dp"
-        android:text=" 举报 "
-        android:textColor="@color/grayLight"
-        android:textSize="13sp"/>
-
-  </LinearLayout>
-
-  <!-- 文案内容 -->
-  <TextView
-      android:id="@+id/textContext"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:lineSpacingExtra="6dp"
-      android:paddingBottom="10dp"
-      android:paddingLeft="10dp"
-      android:paddingRight="10dp"
-      android:paddingTop="5dp"
-      android:text="看图，神评自己想想。"
-      android:textColor="@color/grayDark"
-      android:textSize="16sp"/>
-
-  <!-- 图片内容, [使用这个布局，因为要实现图片过长的时候，收缩显示] -->
-  <answer.android.views.ExpandView
-      android:id="@+id/expandview_pic"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginBottom="10dp"
-      app:unexpanHeight="280dp">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-      <ImageView
-          android:id="@+id/imageView"
-          android:layout_width="match_parent"
-          android:scaleType="fitXY"
-          android:adjustViewBounds="true"
-          android:layout_height="wrap_content"/>
-
-      <LinearLayout
-          android:id="@+id/see_more_pic"
-          android:layout_width="match_parent"
-          android:layout_height="45dp"
-          android:layout_marginTop="235dp"
-          android:background="#88000000"
-          android:gravity="center"
-          android:orientation="horizontal"
-          android:paddingBottom="5dp"
-          android:paddingTop="5dp"
-          android:visibility="gone">
-
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/scal"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:text="点击查看更多"
-            android:textColor="@android:color/white"/>
-
-      </LinearLayout>
-    </RelativeLayout>
-  </answer.android.views.ExpandView>
-
-  <!-- 神评论 -->
-  <LinearLayout
-      android:id="@+id/linearLayoutSplView"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginBottom="10dp"
-      android:layout_marginLeft="6dp"
-      android:layout_marginRight="6dp"
-      android:layout_marginTop="5dp"
-      android:background="@drawable/background_spl"
-      android:orientation="vertical"
-      android:paddingBottom="10dp"
-      android:paddingLeft="10dp"
-      android:paddingRight="10dp"
-      android:paddingTop="5dp">
-
-    <!-- 神评论用户信息 + 点赞按钮-->
+    <!-- 顶部的用户信息 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingBottom="6dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="6dp">
 
-      <ImageView
-          android:layout_width="50dp"
-          android:layout_height="35dp"
-          android:src="@drawable/ic_spl"/>
+        <!-- 用户头像 -->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/circleImageView"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@color/colorPrimary" />
 
-      <TextView
-          android:id="@+id/splname"
-          android:layout_width="0dp"
-          android:layout_height="wrap_content"
-          android:layout_marginLeft="5dp"
-          android:layout_weight="1"
-          android:text="小强"
-          android:textColor="#de5025"
-          android:textSize="16sp"/>
-
-      <LinearLayout
-          android:id="@+id/splzhan"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:background="?attr/selectableItemBackground"
-          android:clickable="true"
-          android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/splzhanicon"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:padding="3dp"
-            android:src="@drawable/ic_zan"/>
-
+        <!-- 用户昵称 -->
         <TextView
-            android:id="@+id/splzancount"
+            android:id="@+id/nickName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:text="未知昵称"
+            android:textSize="16sp" />
+
+        <!-- 举报按钮 -->
+        <TextView
+            android:id="@+id/btn_jb"
             android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:gravity="center"
-            android:text="253"/>
-      </LinearLayout>
+            android:layout_height="wrap_content"
+            android:background="@drawable/border"
+            android:padding="3dp"
+            android:text=" 举报 "
+            android:textColor="@color/grayLight"
+            android:textSize="13sp" />
+
     </LinearLayout>
 
-    <!-- 神评论内容 -->
+    <!-- 文案内容 -->
     <TextView
-        android:id="@+id/sqlcontent"
+        android:id="@+id/textContext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:maxLines="5"
-        android:text="最近天气比较凉了，有男朋友的抱男朋友，有女朋友的抱女朋友，而我就比较牛逼了，我在广东。"
-        android:textColor="#333"
-        android:textSize="14sp"/>
+        android:lineSpacingExtra="6dp"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:text="看图，神评自己想想。"
+        android:textColor="@color/grayDark"
+        android:textSize="16sp" />
 
-
-  </LinearLayout>
-
-  <!-- 分割线 -->
-  <View
-      android:layout_width="match_parent"
-      android:layout_height="0.5dp"
-      android:layout_marginLeft="5dp"
-      android:layout_marginRight="5dp"
-      android:background="#eaeaea"/>
-
-  <!-- 操作按钮 -->
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginBottom="10dp"
-      android:layout_marginLeft="5dp"
-      android:layout_marginRight="5dp"
-      android:layout_marginTop="10dp"
-      android:baselineAligned="true"
-      android:gravity="center_vertical"
-      android:orientation="horizontal"
-      android:paddingLeft="5dp"
-      android:paddingRight="5dp">
-
-    <LinearLayout
-        android:id="@+id/linearLayoutdiao"
-        android:layout_width="wrap_content"
+    <!-- 图片内容, [使用这个布局，因为要实现图片过长的时候，收缩显示] -->
+    <answer.android.views.ExpandView
+        android:id="@+id/expandview_pic"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:orientation="horizontal">
+        app:unexpanHeight="350dp">
 
-      <ImageView
-          android:id="@+id/diaoicon"
-          android:layout_width="25dp"
-          android:layout_height="25dp"
-          android:padding="3dp"
-          android:src="@drawable/ic_diao"/>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-      <TextView
-          android:id="@+id/diaoCount"
-          android:layout_width="wrap_content"
-          android:layout_height="25dp"
-          android:gravity="center"
-          android:text="436"/>
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="fitXY" />
+
+            <!-- 查看更多按钮 -->
+            <LinearLayout
+                android:id="@+id/see_more_pic"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="#88000000"
+                android:gravity="center"
+                android:layout_marginTop="305dp"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/scal" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="点击查看更多"
+                    android:textColor="@android:color/white" />
+
+            </LinearLayout>
+        </FrameLayout>
+    </answer.android.views.ExpandView>
+
+
+    <!-- 神评论 -->
+    <LinearLayout
+        android:id="@+id/linearLayoutSplView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/background_spl"
+        android:orientation="vertical"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp">
+
+        <!-- 神评论用户信息 + 点赞按钮-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:src="@drawable/ic_spl" />
+
+            <TextView
+                android:id="@+id/splname"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="1"
+                android:text="小强"
+                android:textColor="#de5025"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:id="@+id/splzhan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/splzhanicon"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:padding="3dp"
+                    android:src="@drawable/ic_zan" />
+
+                <TextView
+                    android:id="@+id/splzancount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:gravity="center"
+                    android:text="253" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 神评论内容 -->
+        <TextView
+            android:id="@+id/sqlcontent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:maxLines="5"
+            android:text="最近天气比较凉了，有男朋友的抱男朋友，有女朋友的抱女朋友，而我就比较牛逼了，我在广东。"
+            android:textColor="#333"
+            android:textSize="14sp" />
+
+
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayoutkeng"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
-        android:orientation="horizontal">
-
-      <ImageView
-          android:id="@+id/kengicon"
-          android:layout_width="25dp"
-          android:layout_height="25dp"
-          android:padding="3dp"
-          android:src="@drawable/ic_keng"/>
-
-      <TextView
-          android:id="@+id/kengCount"
-          android:layout_width="wrap_content"
-          android:layout_height="25dp"
-          android:gravity="center"
-          android:text="253"/>
-    </LinearLayout>
-
+    <!-- 分割线 -->
     <View
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:background="#eaeaea" />
 
+    <!-- 操作按钮 -->
     <LinearLayout
-        android:id="@+id/linearLayoutpl"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/selectableItemBackground"
-        android:clickable="true"
+        android:layout_marginBottom="10dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
+        android:baselineAligned="true"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
-      <ImageView
-          android:id="@+id/plicon"
-          android:layout_width="25dp"
-          android:layout_height="25dp"
-          android:padding="3dp"
-          android:src="@drawable/ic_pl"/>
+        <!-- 屌 -->
+        <LinearLayout
+            android:id="@+id/linearLayoutdiao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:orientation="horizontal">
 
-      <TextView
-          android:id="@+id/plcount"
-          android:layout_width="wrap_content"
-          android:layout_height="25dp"
-          android:gravity="center"
-          android:text="356"/>
+            <ImageView
+                android:id="@+id/diaoicon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:padding="3dp"
+                android:src="@drawable/ic_diao"/>
+
+            <TextView
+                android:id="@+id/diaoCount"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:gravity="center"
+                android:text="436"/>
+        </LinearLayout>
+
+        <!-- 坑 -->
+        <LinearLayout
+            android:id="@+id/linearLayoutkeng"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/kengicon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:padding="3dp"
+                android:src="@drawable/ic_keng"/>
+
+            <TextView
+                android:id="@+id/kengCount"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:gravity="center"
+                android:text="253"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+
+        <!-- 评论 -->
+        <LinearLayout
+            android:id="@+id/linearLayoutpl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/plicon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:padding="3dp"
+                android:src="@drawable/ic_pl"/>
+
+            <TextView
+                android:id="@+id/plcount"
+                android:layout_width="wrap_content"
+                android:layout_height="25dp"
+                android:gravity="center"
+                android:text="356" />
+        </LinearLayout>
+
+        <!-- 分享 -->
+        <LinearLayout
+            android:id="@+id/linearLayoutshare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/shareicon"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:padding="3dp"
+                android:src="@drawable/ic_share"/>
+        </LinearLayout>
+
     </LinearLayout>
-
-  </LinearLayout>
 
 </LinearLayout>

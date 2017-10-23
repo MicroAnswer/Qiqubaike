@@ -7,6 +7,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.Scroller;
 
 /**
@@ -19,9 +20,9 @@ public class ExpandView extends ViewGroup {
     private boolean isExpan = false; // 标记是否展开
     private boolean closeing = false; // 是否正在关闭
     private boolean opening = false; // 是否正在打开
-    private int unExpanHeight;
-    private int childHeight;
-    private int layoutHeight;
+    private int unExpanHeight; // 未展开的时候的高度
+    private int trueHeight; // 能完全显示子控件的高度
+    private int layoutHeight; // 当前应该显示的高度，这个值会在展开收缩过程中变化的
     private int animTime = 400; // ms
 
     private boolean fromuser; // 标记是用户操作
@@ -81,7 +82,7 @@ public class ExpandView extends ViewGroup {
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        // super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+         // super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         /**
          * 测量规则:
          *  宽度直接使用子View的宽度,
@@ -110,24 +111,27 @@ public class ExpandView extends ViewGroup {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
 
-        child.measure(MeasureSpec.makeMeasureSpec(widthSize - getPaddingLeft() - getPaddingRight(), MeasureSpec.AT_MOST),
-                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+        child.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
 
         int childWidth = widthSize;
 
-        childHeight = child.getMeasuredHeight() + getPaddingTop() + getPaddingBottom();
-        int height = unExpanHeight;
+        trueHeight = child.getMeasuredHeight() + getPaddingTop() + getPaddingBottom();
+        int height;
         if (!isExpan) {
-            if (childHeight > unExpanHeight) {
+            if (trueHeight > unExpanHeight) {
                 height = unExpanHeight;
+            }else {
+                height = trueHeight;
             }
         } else {
-            height = childHeight;
+            height = trueHeight;
         }
 
         layoutHeight = height;
 
-        setMeasuredDimension(childWidth, layoutHeight);
+        // child.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(layoutHeight, MeasureSpec.AT_MOST));
+
+         setMeasuredDimension(childWidth, layoutHeight);
     }
 
     /**
@@ -146,7 +150,7 @@ public class ExpandView extends ViewGroup {
         // Log.i("ExpandView", "l=" + l + ",t=" + t + ",r=" + r + ",b=" + b);
 
         if (childView != null) {
-            int h = getMeasuredHeight() + getPaddingBottom() + getPaddingTop();
+            int h = trueHeight;
             childView.layout(getPaddingLeft(), getPaddingTop(), r - getPaddingRight(), h);
         } else {
             Log.w("ExpandView", "ExpandView has no child.");
@@ -195,7 +199,7 @@ public class ExpandView extends ViewGroup {
             } else {
                 closeing = false;
                 opening = true;
-                layoutHeight = childHeight;
+                layoutHeight = trueHeight;
             }
             isExpan = !isExpan;
             requestLayout();
@@ -211,7 +215,7 @@ public class ExpandView extends ViewGroup {
             return false; // 正在打开或者关闭的时候不进行操作
         }
 
-        if (childHeight < unExpanHeight) {
+        if (trueHeight < unExpanHeight) {
             Log.i("ExpandView", "子控件小于最小高度");
             // 子试图高度小于最小高度
             return false;
@@ -230,8 +234,8 @@ public class ExpandView extends ViewGroup {
         } else {
             closeing = false;
             opening = true;
-            scroller.startScroll(getMeasuredHeight(), 0, childHeight - getMeasuredHeight(), 0, animTime);
-            // Log.i("ExpandView", String.valueOf("" + getMeasuredHeight() + 0 + (childHeight - getMeasuredHeight()) + 0 + animTime));
+            scroller.startScroll(getMeasuredHeight(), 0, trueHeight - getMeasuredHeight(), 0, animTime);
+            // Log.i("ExpandView", String.valueOf("" + getMeasuredHeight() + 0 + (trueHeight - getMeasuredHeight()) + 0 + animTime));
             // Toast.makeText(getContext(), "展开", Toast.LENGTH_SHORT).show();
         }
         // Log.i("ExpandView", "开始动作");
@@ -267,7 +271,7 @@ public class ExpandView extends ViewGroup {
                 forceLayout();
                 invalidate();
                 requestLayout();
-                float p = (layoutHeight - unExpanHeight) / (float) (childHeight - unExpanHeight);
+                float p = (layoutHeight - unExpanHeight) / (float) (trueHeight - unExpanHeight);
                 // Log.i("ExpandView", "p"+String.valueOf(p));
                 if (onExpanListener != null) {
                     onExpanListener.onToggleing(this, p);
