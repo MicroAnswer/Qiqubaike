@@ -204,7 +204,7 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
         }
     }
 
-    class ItemHolder extends RecyclerView.ViewHolder {
+    class ItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         protected Context context;
 
@@ -402,6 +402,35 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
                             linearLayoutSplView.setVisibility(View.GONE);
                         }
                     }
+
+                    // 设置监听
+                    try {
+                        if(linearLayoutdiao !=null && !linearLayoutdiao.hasOnClickListeners()) {
+                            linearLayoutdiao.setOnClickListener(this);
+                        }
+                        if(linearLayoutkeng !=null && !linearLayoutkeng.hasOnClickListeners()) {
+                            linearLayoutkeng.setOnClickListener(this);
+                        }
+                        if(linearLayoutpl !=null && !linearLayoutpl.hasOnClickListeners()) {
+                            linearLayoutpl.setOnClickListener(this);
+                        }
+                        if(linearLayoutSplView !=null && !linearLayoutSplView.hasOnClickListeners()) {
+                            linearLayoutSplView.setOnClickListener(this);
+                        }
+                        if(getLinearLayoutshare !=null && !getLinearLayoutshare.hasOnClickListeners()) {
+                            getLinearLayoutshare.setOnClickListener(this);
+                        }
+                        if(btnJB !=null && !btnJB.hasOnClickListeners()) {
+                            btnJB.setOnClickListener(this);
+                        }
+                        if(headImg != null && headImg.hasOnClickListeners()) {
+                            headImg.setOnClickListener(this);
+                        }
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
                 }
             }
             return this;
@@ -412,6 +441,67 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
         }
 
 
+        @Override
+        public void onClick(View v) {
+            if (linearLayoutSplView == v) {
+                onSPLClick();
+            } else if(linearLayoutpl == v) {
+                onPLCkick();
+            } else if(linearLayoutkeng == v) {
+                onKengClick();
+            } else if(linearLayoutdiao == v) {
+                onDiaoClick();
+            } else if(getLinearLayoutshare == v) {
+                onShareClick();
+            } else if(headImg == v) {
+                onHeadImgClick();
+            } else if(btnJB == v) {
+                onJBClick();
+            }else {
+                onSomethingClick(v);
+            }
+        }
+
+        /**
+         * 神评论点击
+         */
+        protected void onSPLClick(){}
+
+        /**
+         * 坑 点击i
+         */
+        protected void onKengClick(){}
+
+        /**
+         * 屌 点击
+         */
+        protected void onDiaoClick(){}
+
+        /**
+         * 分享点击
+         */
+        protected void onShareClick(){}
+
+        /**
+         * 评论点击
+         */
+        protected void onPLCkick(){}
+
+        /**
+         * 头像点击
+         */
+        protected void onHeadImgClick(){}
+
+        /**
+         * 举报按钮点击
+         */
+        protected void onJBClick(){}
+
+        /**
+         * 当点击的东西都没在判断范围内,调用此方法
+         * @param v
+         */
+        protected void onSomethingClick(View v){}
     }
 
     class ItemHolderImage extends ItemHolder implements View.OnClickListener {
