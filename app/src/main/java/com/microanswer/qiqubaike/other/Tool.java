@@ -127,7 +127,7 @@ public class Tool {
     /**
      * 分享
      */
-    public void showShare(Context context, ShareObj shareObj) {
+    public static void showShare(Context context, ShareObj shareObj) {
         OnekeyShare oks = new OnekeyShare();
         //关闭sso授权
         oks.disableSSOWhenAuthorize();

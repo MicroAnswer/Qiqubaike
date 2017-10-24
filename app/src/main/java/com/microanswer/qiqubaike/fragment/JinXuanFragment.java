@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -28,6 +29,7 @@ import com.microanswer.qiqubaike.R;
 import com.microanswer.qiqubaike.api.QiquApi;
 import com.microanswer.qiqubaike.bean.BannerItem;
 import com.microanswer.qiqubaike.bean.JinXuanItem;
+import com.microanswer.qiqubaike.bean.ShareObj;
 import com.microanswer.qiqubaike.other.Fun;
 import com.microanswer.qiqubaike.other.Tool;
 import com.youth.banner.Banner;
@@ -206,6 +208,7 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
 
     class ItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        //<editor-fold desc="一堆变量">
         protected Context context;
 
         /**
@@ -304,6 +307,7 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
         protected LinearLayout getLinearLayoutshare;
 
         protected JinXuanItem jinXuanItem;
+        //</editor-fold>
 
         public ItemHolder(View itemView) {
             super(itemView);
@@ -346,6 +350,7 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
                 int posi = position - 1;
                 if (null != items && posi < items.size()) {
                     jinXuanItem = items.get(posi);
+                    Log.i("JinXuanItem", jinXuanItem.toString());
                 }
 
                 if (jinXuanItem != null) {
@@ -440,9 +445,9 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
             return this;
         }
 
-
         @Override
         public void onClick(View v) {
+            Log.i("JinXuanItem", v.getId() + ", " + v.getClass().getName());
             if (linearLayoutSplView == v) {
                 onSPLClick();
             } else if(linearLayoutpl == v) {
@@ -480,7 +485,15 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
         /**
          * 分享点击
          */
-        protected void onShareClick(){}
+        protected void onShareClick(){
+            if(jinXuanItem!=null) {
+                Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
+                ShareObj s = new ShareObj();
+                s.title = "分享";
+                s.text = TextUtils.isEmpty(jinXuanItem.getTitle())?jinXuanItem.getContent():jinXuanItem.getTitle();
+                Tool.showShare(context, s);
+            }
+        }
 
         /**
          * 评论点击
@@ -504,7 +517,7 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
         protected void onSomethingClick(View v){}
     }
 
-    class ItemHolderImage extends ItemHolder implements View.OnClickListener {
+    class ItemHolderImage extends ItemHolder {
 
         private ExpandView expandView;
         private LinearLayout btn_see_more_pic;
@@ -558,7 +571,8 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
         }
 
         @Override
-        public void onClick(View view) {
+        public void onSomethingClick(View view) {
+            super.onSomethingClick(view);
             switch (view.getId()) {
                 case R.id.see_more_pic:
                     expandView.toggle();
@@ -642,7 +656,8 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
         }
 
         @Override
-        public void onClick(View v) {
+        public void onSomethingClick(View v) {
+            super.onSomethingClick(v);
             if (v == linearLayoutplaygif) {
                 linearLayoutplaygif.setVisibility(View.GONE);
                 gifloadprogress.setVisibility(View.VISIBLE);

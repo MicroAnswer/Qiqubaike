@@ -8,4 +8,10 @@
   <color name="grayDark">#606060</color>
   <color name="grayLight">#d0d0d0</color>
 
+  <!-- 精选详细信息背景色 -->
+  <color name="jinXuanDetailBackgroundColor">#e1e1e1</color>
+
+  <!-- 线条颜色 -->
+  <color name="line_color">#eaeaea</color>
+
 </resources>

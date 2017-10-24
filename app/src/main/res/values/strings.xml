@@ -10,4 +10,9 @@
         <!--<item>发现</item>-->
         <!--<item>奇趣专栏</item>-->
     </array>
+
+    <!-- 评论Item的左右内边距 -->
+    <dimen name="view_item_pad_lr">10dp</dimen>
+    <!-- 评论Item的上下内边距 -->
+    <dimen name="view_item_pad_tb">5dp</dimen>
 </resources>

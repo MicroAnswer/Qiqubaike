@@ -39,6 +39,8 @@ public class QiquApi {
      */
     public static String JinXuanContent = HOST + "/qiqu/api/v1/channel/20070";
 
+    public static String JinXuanDetail = HOST + "/qiqu/api/v1/article/20070/{id}";
+
     /**
      * 获取精选分类中的banner数据
      *
