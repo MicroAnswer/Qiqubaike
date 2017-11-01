@@ -92,7 +92,7 @@ public class JinXuanDetailActivity extends BaseActivity {
             }
 
 
-            return super.getItemViewType(position);
+            return 0;
         }
 
         @Override

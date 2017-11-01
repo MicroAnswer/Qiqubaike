@@ -100,7 +100,11 @@ public class QiquApi {
                         JinXuanItem jinXuanItem = JSON.parseObject(item.toJSONString(), JinXuanItem.class);
                         if (!TextUtils.isEmpty(jinXuanItem.getSummary()) || !TextUtils.isEmpty(jinXuanItem.getTitle())) {
                             // 不知道为什么,有些条目明明是文案类型,可就是没有文案,过滤这种的
-                            articleBeans.add(jinXuanItem);
+
+                            // 精选里面只能有图片(0)和文案(1)的内容,不能有其他的,比如视频(3)
+                            if(item.getIntValue("item_type") < 2) {
+                                articleBeans.add(jinXuanItem);
+                            }
                         }
                     }
 

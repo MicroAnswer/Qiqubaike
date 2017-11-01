@@ -12,11 +12,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +27,6 @@ import com.microanswer.qiqubaike.R;
 import com.microanswer.qiqubaike.api.QiquApi;
 import com.microanswer.qiqubaike.bean.BannerItem;
 import com.microanswer.qiqubaike.bean.JinXuanItem;
-import com.microanswer.qiqubaike.bean.ShareObj;
 import com.microanswer.qiqubaike.other.Fun;
 import com.microanswer.qiqubaike.other.Tool;
 import com.youth.banner.Banner;
@@ -98,15 +95,17 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
                         adapter.notifyDataSetChanged();
                     } else {
                         List<JinXuanItem> data1 = (List<JinXuanItem>) data.get("data");
+                        int size = items.size();
                         items.addAll(data1);
-                        adapter.notifyItemRangeChanged(items.size(), data1.size());
+                        adapter.notifyItemRangeChanged(size, data1.size());
                     }
                     JinXuanFragment.this.recoid = data.get("recoid").toString();
                     swiperefreshlayout.setRefreshing(false);
                     isLoading = false;
                     // AlertDialog alertDialog = new AlertDialog.Builder(getActivity())
-                    //         .setMessage(result).setPositiveButton("确定",null).create();
+                    //         .setMessage(result).setPositiveButton("确定", null).create();
                     // alertDialog.show();
+                    // Log.i("JinXuanItem", result);
                     return null;
                 }
             }).promise();
@@ -302,7 +301,7 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
         protected TextView plCount;
 
         /**
-         *  分享按钮
+         * 分享按钮
          */
         protected LinearLayout getLinearLayoutshare;
 
@@ -410,29 +409,29 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
 
                     // 设置监听
                     try {
-                        if(linearLayoutdiao !=null && !linearLayoutdiao.hasOnClickListeners()) {
+                        if (linearLayoutdiao != null && !linearLayoutdiao.hasOnClickListeners()) {
                             linearLayoutdiao.setOnClickListener(this);
                         }
-                        if(linearLayoutkeng !=null && !linearLayoutkeng.hasOnClickListeners()) {
+                        if (linearLayoutkeng != null && !linearLayoutkeng.hasOnClickListeners()) {
                             linearLayoutkeng.setOnClickListener(this);
                         }
-                        if(linearLayoutpl !=null && !linearLayoutpl.hasOnClickListeners()) {
+                        if (linearLayoutpl != null && !linearLayoutpl.hasOnClickListeners()) {
                             linearLayoutpl.setOnClickListener(this);
                         }
-                        if(linearLayoutSplView !=null && !linearLayoutSplView.hasOnClickListeners()) {
+                        if (linearLayoutSplView != null && !linearLayoutSplView.hasOnClickListeners()) {
                             linearLayoutSplView.setOnClickListener(this);
                         }
-                        if(getLinearLayoutshare !=null && !getLinearLayoutshare.hasOnClickListeners()) {
+                        if (getLinearLayoutshare != null && !getLinearLayoutshare.hasOnClickListeners()) {
                             getLinearLayoutshare.setOnClickListener(this);
                         }
-                        if(btnJB !=null && !btnJB.hasOnClickListeners()) {
+                        if (btnJB != null && !btnJB.hasOnClickListeners()) {
                             btnJB.setOnClickListener(this);
                         }
-                        if(headImg != null && headImg.hasOnClickListeners()) {
+                        if (headImg != null && headImg.hasOnClickListeners()) {
                             headImg.setOnClickListener(this);
                         }
 
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
@@ -450,19 +449,19 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
             Log.i("JinXuanItem", v.getId() + ", " + v.getClass().getName());
             if (linearLayoutSplView == v) {
                 onSPLClick();
-            } else if(linearLayoutpl == v) {
+            } else if (linearLayoutpl == v) {
                 onPLCkick();
-            } else if(linearLayoutkeng == v) {
+            } else if (linearLayoutkeng == v) {
                 onKengClick();
-            } else if(linearLayoutdiao == v) {
+            } else if (linearLayoutdiao == v) {
                 onDiaoClick();
-            } else if(getLinearLayoutshare == v) {
+            } else if (getLinearLayoutshare == v) {
                 onShareClick();
-            } else if(headImg == v) {
+            } else if (headImg == v) {
                 onHeadImgClick();
-            } else if(btnJB == v) {
+            } else if (btnJB == v) {
                 onJBClick();
-            }else {
+            } else {
                 onSomethingClick(v);
             }
         }
@@ -470,51 +469,54 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
         /**
          * 神评论点击
          */
-        protected void onSPLClick(){}
+        protected void onSPLClick() {
+        }
 
         /**
          * 坑 点击i
          */
-        protected void onKengClick(){}
+        protected void onKengClick() {
+        }
 
         /**
          * 屌 点击
          */
-        protected void onDiaoClick(){}
+        protected void onDiaoClick() {
+        }
 
         /**
          * 分享点击
          */
-        protected void onShareClick(){
-            if(jinXuanItem!=null) {
-                Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
-                ShareObj s = new ShareObj();
-                s.title = "分享";
-                s.text = TextUtils.isEmpty(jinXuanItem.getTitle())?jinXuanItem.getContent():jinXuanItem.getTitle();
-                Tool.showShare(context, s);
+        protected void onShareClick() {
+            if (jinXuanItem != null) {
             }
         }
 
         /**
          * 评论点击
          */
-        protected void onPLCkick(){}
+        protected void onPLCkick() {
+        }
 
         /**
          * 头像点击
          */
-        protected void onHeadImgClick(){}
+        protected void onHeadImgClick() {
+        }
 
         /**
          * 举报按钮点击
          */
-        protected void onJBClick(){}
+        protected void onJBClick() {
+        }
 
         /**
          * 当点击的东西都没在判断范围内,调用此方法
+         *
          * @param v
          */
-        protected void onSomethingClick(View v){}
+        protected void onSomethingClick(View v) {
+        }
     }
 
     class ItemHolderImage extends ItemHolder {

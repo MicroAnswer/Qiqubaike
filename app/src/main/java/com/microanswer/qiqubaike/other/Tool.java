@@ -7,17 +7,11 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
-import android.util.Log;
-
-import com.microanswer.qiqubaike.R;
-import com.microanswer.qiqubaike.bean.ShareObj;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import cn.sharesdk.onekeyshare.OnekeyShare;
 
 /**
  * Created by Microanswer on 2017/10/18.
@@ -127,31 +121,7 @@ public class Tool {
     /**
      * 分享
      */
-    public static void showShare(Context context, ShareObj shareObj) {
-        OnekeyShare oks = new OnekeyShare();
-        //关闭sso授权
-        oks.disableSSOWhenAuthorize();
+    public static void showShare(Context context) {
 
-        // 分享时Notification的图标和文字  2.5.9以后的版本不     调用此方法
-        //oks.setNotification(R.drawable.ic_launcher, getString(R.string.app_name));
-        // title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
-        oks.setTitle(shareObj.title);
-        // titleUrl是标题的网络链接，仅在人人网和QQ空间使用
-        oks.setTitleUrl(shareObj.titleUrl);
-        // text是分享文本，所有平台都需要这个字段
-        oks.setText(shareObj.text);
-        // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
-        oks.setImagePath(shareObj.imagePath);//确保SDcard下面存在此张图片
-        // url仅在微信（包括好友和朋友圈）中使用
-        oks.setUrl(shareObj.url);
-        // comment是我对这条分享的评论，仅在人人网和QQ空间使用
-        oks.setComment(shareObj.comment);
-        // site是分享此内容的网站名称，仅在QQ空间使用
-        oks.setSite(shareObj.site);
-        // siteUrl是分享此内容的网站地址，仅在QQ空间使用
-        oks.setSiteUrl(shareObj.siteUrl);
-
-        // 启动分享GUI
-        oks.show(context);
     }
 }
