@@ -1,20 +1,25 @@
 package com.microanswer.qiqubaike.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.microanswer.qiqubaike.R;
-import com.microanswer.qiqubaike.bean.JinXuanItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
+ * 此界面为了实现
  * Created by Micro on 2017-10-25.
  */
 
@@ -48,16 +53,29 @@ public class JinXuanDetailActivity extends BaseActivity {
         adapter = new Adpt();
     }
 
-    private class Adpt extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private class Adpt extends RecyclerView.Adapter<ItemViewHolder> {
+
+        private LayoutInflater layoutInflater;
 
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return null;
+        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            if (null == layoutInflater) {
+                layoutInflater = LayoutInflater.from(parent.getContext());
+            }
+
+            View v = layoutInflater.inflate(viewType, parent, false);
+            ItemViewHolder itemViewHolder = null;
+
+            if (viewType == R.layout.view_loading) {
+                itemViewHolder = new LoadingHolder(v);
+            }
+
+            return itemViewHolder.init(parent.getContext());
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+        public void onBindViewHolder(ItemViewHolder holder, int position) {
+            holder.bind(position);
         }
 
         @Override
@@ -87,11 +105,7 @@ public class JinXuanDetailActivity extends BaseActivity {
                 // } else if (item.getItem_type() == 1) {
                 //     return R.layout.jinxuan_item_text;
                 // }
-
-
             }
-
-
             return 0;
         }
 
@@ -100,4 +114,59 @@ public class JinXuanDetailActivity extends BaseActivity {
             return data.size();
         }
     }
+
+
+    private abstract class ItemViewHolder extends RecyclerView.ViewHolder {
+        protected Context context;
+
+        public ItemViewHolder(View itemView) {
+            super(itemView);
+        }
+
+        protected View findViewById(int id) {
+            return itemView.findViewById(id);
+        }
+
+        ItemViewHolder init(Context context) {
+            this.context = context;
+            return this;
+        }
+
+        abstract ItemViewHolder bind(int position);
+
+        abstract ItemViewHolder recycled();
+    }
+
+    /**
+     * 小贱军疯狂加载中...
+     */
+    private class LoadingHolder extends ItemViewHolder {
+        private ImageView load_view;
+
+        public LoadingHolder(View itemView) {
+            super(itemView);
+        }
+
+        @Override
+        LoadingHolder init(Context context) {
+            super.init(context);
+            load_view = (ImageView) findViewById(R.id.load_view);
+            return this;
+        }
+
+        @Override
+        LoadingHolder bind(int position) {
+            Glide.with(context).load(R.drawable.uc_loading)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .dontAnimate()
+                    .into(load_view);
+            return this;
+        }
+
+        @Override
+        LoadingHolder recycled() {
+            return this;
+        }
+    }
+
 }
