@@ -1,10 +1,12 @@
 package com.microanswer.qiqubaike.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,9 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.microanswer.qiqubaike.R;
+import com.microanswer.qiqubaike.bean.JinXuanItem;
+import com.microanswer.qiqubaike.viewholder.ItemHolder;
+import com.microanswer.qiqubaike.viewholder.ViewLoadingHolder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,13 +28,16 @@ import java.util.Map;
  * Created by Micro on 2017-10-25.
  */
 
-public class JinXuanDetailActivity extends BaseActivity {
+public class JinXuanDetailActivity extends BaseActivity implements ViewLoadingHolder.OnShouldLoad {
     private final String TYPE = "epyt";
     private final String DATA = "atad";
 
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
     private Adpt adapter;
+
+    // 当前要显示的内容id
+    private String jinXuanItemId;
     private ArrayList<Map<String, Object>> data;
 
     @Override
@@ -53,29 +61,42 @@ public class JinXuanDetailActivity extends BaseActivity {
         adapter = new Adpt();
     }
 
-    private class Adpt extends RecyclerView.Adapter<ItemViewHolder> {
+    @Override
+    public void onLoad() {
+
+        // 获取传入到该页面的内容id
+        Intent intent = getIntent();
+        jinXuanItemId = intent.getStringExtra("id");
+
+
+
+    }
+
+    private class Adpt extends RecyclerView.Adapter<ItemHolder> {
 
         private LayoutInflater layoutInflater;
 
         @Override
-        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             if (null == layoutInflater) {
                 layoutInflater = LayoutInflater.from(parent.getContext());
             }
 
             View v = layoutInflater.inflate(viewType, parent, false);
-            ItemViewHolder itemViewHolder = null;
+            ItemHolder itemViewHolder = null;
 
             if (viewType == R.layout.view_loading) {
-                itemViewHolder = new LoadingHolder(v);
+                ViewLoadingHolder vlh = new ViewLoadingHolder(v);
+                vlh.setOnShouldLoad(JinXuanDetailActivity.this);
+                itemViewHolder = vlh;
             }
 
             return itemViewHolder.init(parent.getContext());
         }
 
         @Override
-        public void onBindViewHolder(ItemViewHolder holder, int position) {
-            holder.bind(position);
+        public void onBindViewHolder(ItemHolder holder, int position) {
+            holder.bind(position, null);
         }
 
         @Override
@@ -112,60 +133,6 @@ public class JinXuanDetailActivity extends BaseActivity {
         @Override
         public int getItemCount() {
             return data.size();
-        }
-    }
-
-
-    private abstract class ItemViewHolder extends RecyclerView.ViewHolder {
-        protected Context context;
-
-        public ItemViewHolder(View itemView) {
-            super(itemView);
-        }
-
-        protected View findViewById(int id) {
-            return itemView.findViewById(id);
-        }
-
-        ItemViewHolder init(Context context) {
-            this.context = context;
-            return this;
-        }
-
-        abstract ItemViewHolder bind(int position);
-
-        abstract ItemViewHolder recycled();
-    }
-
-    /**
-     * 小贱军疯狂加载中...
-     */
-    private class LoadingHolder extends ItemViewHolder {
-        private ImageView load_view;
-
-        public LoadingHolder(View itemView) {
-            super(itemView);
-        }
-
-        @Override
-        LoadingHolder init(Context context) {
-            super.init(context);
-            load_view = (ImageView) findViewById(R.id.load_view);
-            return this;
-        }
-
-        @Override
-        LoadingHolder bind(int position) {
-            Glide.with(context).load(R.drawable.uc_loading)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .dontAnimate()
-                    .into(load_view);
-            return this;
-        }
-
-        @Override
-        LoadingHolder recycled() {
-            return this;
         }
     }
 

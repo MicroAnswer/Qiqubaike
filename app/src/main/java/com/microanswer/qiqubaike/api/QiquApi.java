@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * 崎岖百科API接口地址
@@ -39,7 +40,15 @@ public class QiquApi {
      */
     public static String JinXuanContent = HOST + "/qiqu/api/v1/channel/20070";
 
+    /**
+     * 精选条目内容详情借口
+     */
     public static String JinXuanDetail = HOST + "/qiqu/api/v1/article/20070/{id}";
+
+    /**
+     * 获取内容评论接口
+     */
+    public static String JinXuanPinLun = HOST + "/interactive/v1/comment/article/{id}/byhot";
 
     /**
      * 获取精选分类中的banner数据
@@ -79,7 +88,7 @@ public class QiquApi {
             @Override
             public Object d0(Object obj) throws Throwable {
                 RequestParams requestParams = new RequestParams(obj.toString());
-                requestParams.addQueryStringParameter("uc_param_str", "dnnivebichfrmintcpgieiwidsudsv");
+                requestParams.addQueryStringParameter("uc_param_str", UUID.randomUUID().toString());
                 requestParams.addQueryStringParameter("method", "new");
                 requestParams.addQueryStringParameter("app", "ucqiquh5");
                 requestParams.addQueryStringParameter("recoid", TextUtils.isEmpty(recoid) ? "" : recoid);
@@ -102,7 +111,7 @@ public class QiquApi {
                             // 不知道为什么,有些条目明明是文案类型,可就是没有文案,过滤这种的
 
                             // 精选里面只能有图片(0)和文案(1)的内容,不能有其他的,比如视频(3)
-                            if(item.getIntValue("item_type") < 2) {
+                            if (item.getIntValue("item_type") < 2) {
                                 articleBeans.add(jinXuanItem);
                             }
                         }
@@ -117,5 +126,39 @@ public class QiquApi {
                 return null;
             }
         }).param(JinXuanContent);
+    }
+
+    /**
+     * 获取某条目的详细内容
+     *
+     * @param jinxuanId
+     * @return
+     */
+    public static Promise getJinXuanDetail(String jinxuanId) {
+        return new Promise(new Fun() {
+            @Override
+            public Object d0(Object obj) throws Throwable {
+                String id = obj.toString();
+                String finaurl = JinXuanDetail.replace("{id}", id);
+                String ucParamStr = UUID.randomUUID().toString();
+
+                RequestParams params = new RequestParams(finaurl);
+                params.addQueryStringParameter("uc_param_str", ucParamStr);
+
+                String s = x.http().requestSync(HttpMethod.GET, params, String.class);
+                try {
+                    // 解析数据
+                    JSONObject jsonObject = JSON.parseObject(s);
+                    if (TextUtils.equals(jsonObject.getString("message"), "ok")
+                            && 0 == jsonObject.getIntValue("status")) {
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        return JSON.parseObject(data.toJSONString(), JinXuanItem.class);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }).param(jinxuanId);
     }
 }
