@@ -15,7 +15,9 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.microanswer.qiqubaike.R;
+import com.microanswer.qiqubaike.api.QiquApi;
 import com.microanswer.qiqubaike.bean.JinXuanItem;
+import com.microanswer.qiqubaike.other.Fun;
 import com.microanswer.qiqubaike.viewholder.ItemHolder;
 import com.microanswer.qiqubaike.viewholder.ViewLoadingHolder;
 
@@ -61,14 +63,33 @@ public class JinXuanDetailActivity extends BaseActivity implements ViewLoadingHo
         adapter = new Adpt();
     }
 
+    private boolean isLoading = false;
     @Override
     public void onLoad() {
+
+        if(isLoading) {
+            return;
+        }
 
         // 获取传入到该页面的内容id
         Intent intent = getIntent();
         jinXuanItemId = intent.getStringExtra("id");
 
+        QiquApi.getJinXuanContent(jinXuanItemId).then(new Fun() {
+            @Override
+            public Object d0(Object obj) throws Throwable {
 
+                return null;
+            }
+        }).then(new Fun() {
+            @Override
+            public Object d0(Object obj) throws Throwable {
+
+
+                isLoading = false;
+                return null;
+            }
+        }).promise();
 
     }
 

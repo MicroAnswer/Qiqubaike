@@ -1,12 +1,12 @@
 package com.microanswer.qiqubaike.api;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.microanswer.qiqubaike.bean.BannerItem;
+import com.microanswer.qiqubaike.bean.JinXuanComment;
 import com.microanswer.qiqubaike.bean.JinXuanItem;
 import com.microanswer.qiqubaike.other.Fun;
 import com.microanswer.qiqubaike.other.Promise;
@@ -153,6 +153,66 @@ public class QiquApi {
                             && 0 == jsonObject.getIntValue("status")) {
                         JSONObject data = jsonObject.getJSONObject("data");
                         return JSON.parseObject(data.toJSONString(), JinXuanItem.class);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }).param(jinxuanId);
+    }
+
+
+    /**
+     * 获取某条内容的评论
+     *
+     * @param jinxuanId
+     * @return
+     */
+    public static Promise getJinXuanPinLun(String jinxuanId) {
+        return new Promise(new Fun() {
+            @Override
+            public Object d0(Object obj) throws Throwable {
+                String id = obj.toString();
+                String finaurl = JinXuanPinLun.replace("{id}", id);
+                String ucParamStr = UUID.randomUUID().toString();
+
+                RequestParams params = new RequestParams(finaurl);
+                params.addQueryStringParameter("uc_param_str", ucParamStr);
+                params.addQueryStringParameter("pgn", "1");
+
+                String s = x.http().requestSync(HttpMethod.GET, params, String.class);
+                try {
+                    // 解析数据
+                    JSONObject jsonObject = JSON.parseObject(s);
+                    if (TextUtils.equals(jsonObject.getString("message"), "ok")
+                            && 0 == jsonObject.getIntValue("status")) {
+                        JSONObject data = jsonObject.getJSONObject("data");
+
+                        JSONArray ids = data.getJSONArray("comments");
+
+                        if (ids != null && ids.size() > 0) {
+                            Map<String, ArrayList<JinXuanComment>> d = new HashMap<String, ArrayList<JinXuanComment>>();
+                            ArrayList<JinXuanComment> comments = new ArrayList<JinXuanComment>();
+                            ArrayList<JinXuanComment> hotcomments = new ArrayList<JinXuanComment>();
+                            JSONObject datas = data.getJSONObject("comments_map");
+
+                            for (int index = 0; index < ids.size(); index++) {
+                                id = ids.getString(index);
+                                JinXuanComment jc = JSON.parseObject(datas.getJSONObject(id).toJSONString(), JinXuanComment.class);
+                                if (jc.getIs_hot() == 1) {
+                                    // 是神评论
+                                    hotcomments.add(jc);
+                                } else {
+                                    // 不是神评论
+                                    comments.add(jc);
+                                }
+                            }
+                            d.put("hotcomments", hotcomments);
+                            d.put("comments", comments);
+                            return d;
+                        }
+
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

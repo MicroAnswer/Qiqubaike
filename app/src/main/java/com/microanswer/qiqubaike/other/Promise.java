@@ -27,6 +27,16 @@ public class Promise {
         }
     }
 
+    public Promise then(Promise promise) {
+        if (this.then == null) {
+            this.then = promise;
+            return this;
+        } else {
+            this.then.then = promise;
+            return this.then;
+        }
+    }
+
     public Promise param(Object funParam) {
         this.funParam = funParam;
         return this;
