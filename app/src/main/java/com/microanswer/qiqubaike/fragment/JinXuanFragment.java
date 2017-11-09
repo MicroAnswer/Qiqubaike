@@ -2,8 +2,10 @@ package com.microanswer.qiqubaike.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.PopupMenuCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -78,7 +80,7 @@ public class JinXuanFragment extends BaseFragment implements SwipeRefreshLayout.
                         List<JinXuanItem> data1 = (List<JinXuanItem>) data.get("data");
                         int size = items.size();
                         items.addAll(data1);
-                        adapter.notifyItemRangeChanged(size, data1.size());
+                        adapter.notifyItemRangeChanged(size + 1, data1.size());
                     }
                     JinXuanFragment.this.recoid = data.get("recoid").toString();
                     swiperefreshlayout.setRefreshing(false);

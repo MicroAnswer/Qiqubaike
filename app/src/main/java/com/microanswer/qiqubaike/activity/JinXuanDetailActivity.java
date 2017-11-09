@@ -63,11 +63,12 @@ public class JinXuanDetailActivity extends BaseActivity implements ViewLoadingHo
         adapter = new Adpt();
     }
 
-    private boolean isLoading = false;
+    private boolean isLoading = false; // 是否正在加载内容
+    private boolean isLoadingPL = false; // 是否真正在加载评论
     @Override
     public void onLoad() {
 
-        if(isLoading) {
+        if(isLoading || isLoadingPL) {
             return;
         }
 
@@ -75,21 +76,31 @@ public class JinXuanDetailActivity extends BaseActivity implements ViewLoadingHo
         Intent intent = getIntent();
         jinXuanItemId = intent.getStringExtra("id");
 
-        QiquApi.getJinXuanContent(jinXuanItemId).then(new Fun() {
-            @Override
-            public Object d0(Object obj) throws Throwable {
+        // 内容和评论分开同时加载
 
-                return null;
-            }
-        }).then(new Fun() {
-            @Override
-            public Object d0(Object obj) throws Throwable {
+        if (!isLoading) {
+            isLoading = true;
+            QiquApi.getJinXuanContent(jinXuanItemId).then(new Fun() {
+                @Override
+                public Object d0(Object obj) throws Throwable {
 
+                    isLoading = false;
+                    return null;
+                }
+            }).promise();
+        }
 
-                isLoading = false;
-                return null;
-            }
-        }).promise();
+        if (!isLoadingPL) {
+            isLoadingPL = true;
+            QiquApi.getJinXuanPinLun(jinXuanItemId).then(new Fun() {
+                @Override
+                public Object d0(Object obj) throws Throwable {
+
+                    isLoadingPL = false;
+                    return null;
+                }
+            }).promise();
+        }
 
     }
 

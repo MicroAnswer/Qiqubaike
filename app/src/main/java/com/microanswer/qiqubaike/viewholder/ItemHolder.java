@@ -174,11 +174,11 @@ public class ItemHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
                     if (textContent != null) {
                         if (TextUtils.isEmpty(summary) && !TextUtils.isEmpty(title)) {
-                            textContent.setText(title);
+                            textContent.setText(Tool.formatUcText(context, title));
                         } else if (!TextUtils.isEmpty(summary) && TextUtils.isEmpty(title)) {
-                            textContent.setText(summary);
+                            textContent.setText(Tool.formatUcText(context, summary));
                         } else {
-                            textContent.setText("这个用户没有找到文案内容。");
+                            textContent.setText("err. No Data.");
                             Log.i("JinXuanItem", jinXuanItem.toString());
                         }
                     }
