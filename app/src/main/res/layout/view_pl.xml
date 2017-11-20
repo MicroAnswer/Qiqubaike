@@ -1,72 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?><!-- 评论内容 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingBottom="@dimen/view_item_pad_tb"
-    android:paddingLeft="@dimen/view_item_pad_lr"
-    android:paddingRight="@dimen/view_item_pad_lr"
-    android:paddingTop="@dimen/view_item_pad_tb">
+    android:orientation="vertical">
 
-    <android.support.v4.widget.CircleImageView
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:src="@mipmap/ic_launcher" />
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:background="@android:color/white"
+      android:paddingBottom="10dp"
+      android:layout_marginLeft="@dimen/view_item_pad_lr"
+      android:layout_marginRight="@dimen/view_item_pad_lr"
+      android:paddingLeft="@dimen/view_item_pad_lr"
+      android:paddingRight="@dimen/view_item_pad_lr"
+      android:paddingTop="10dp">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/head"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@mipmap/ic_launcher"/>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:layout_marginLeft="@dimen/view_item_pad_lr"
+        android:layout_weight="1"
         android:orientation="vertical">
 
-        <!-- 评论用户和赞 -->
-        <LinearLayout
-            android:layout_width="match_parent"
+      <!-- 评论用户和赞 -->
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
+            android:layout_weight="1"
+            android:text="奇友3987"
+            android:textColor="#888"
+            android:textSize="15sp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="#888"
-                android:layout_weight="1"
-                android:text="奇友3987" />
+          <ImageView
+              android:layout_width="23dp"
+              android:layout_height="23dp"
+              android:padding="3dp"
+              android:src="@drawable/sic_zan"/>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:padding="3dp"
-                    android:src="@drawable/sic_zan" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="25dp"
-                    android:textColor="#888"
-                    android:gravity="center"
-                    android:text="431" />
-
-            </LinearLayout>
-
+          <TextView
+              android:id="@+id/zhancount"
+              android:layout_width="wrap_content"
+              android:layout_height="25dp"
+              android:gravity="center"
+              android:text="431"
+              android:textColor="#888"/>
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/plcontent"
-            android:layout_width="match_parent"
-            android:textColor="#4E4E4E"
-            android:paddingTop="2dp"
-            android:textSize="16sp"
-            android:layout_height="wrap_content" />
+
+      </LinearLayout>
+
+      <TextView
+          android:id="@+id/plcontent"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:lineSpacingExtra="4dp"
+          android:paddingTop="2dp"
+          android:textColor="#3e3e3e"
+          android:textSize="14sp"/>
 
 
     </LinearLayout>
+
+  </LinearLayout>
+
+  <View
+      android:layout_width="match_parent"
+      android:layout_height="0.5dp"
+      android:layout_marginLeft="15dp"
+      android:background="@color/line_color"/>
 
 </LinearLayout>

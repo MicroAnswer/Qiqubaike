@@ -1,2 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?><!-- 精选详细界面 -->
-<android.support.v7.widget.RecyclerView android:id="@+id/recyclerview" xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@color/jinXuanDetailBackgroundColor" />
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="@color/jinXuanDetailBackgroundColor"
+    android:layout_height="match_parent">
+
+  <!-- 详细显示区域， 更具类型动态填入 -->
+  <android.support.design.widget.AppBarLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/detailContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/jinXuanDetailBackgroundColor"
+        android:orientation="vertical"
+        app:layout_scrollFlags="scroll|enterAlwaysCollapsed"/>
+  </android.support.design.widget.AppBarLayout>
+
+
+  <android.support.v7.widget.RecyclerView
+      android:layout_width="match_parent"
+      android:id="@+id/recyclerview"
+      android:layout_marginBottom="10dp"
+      android:layout_height="match_parent"
+      app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
+
+</android.support.design.widget.CoordinatorLayout>

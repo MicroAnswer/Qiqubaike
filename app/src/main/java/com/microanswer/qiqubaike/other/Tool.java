@@ -2,12 +2,17 @@ package com.microanswer.qiqubaike.other;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ImageSpan;
 
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;

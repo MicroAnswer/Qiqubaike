@@ -1,28 +1,31 @@
 package com.microanswer.qiqubaike.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.microanswer.qiqubaike.R;
 import com.microanswer.qiqubaike.api.QiquApi;
+import com.microanswer.qiqubaike.bean.JinXuanComment;
 import com.microanswer.qiqubaike.bean.JinXuanItem;
 import com.microanswer.qiqubaike.other.Fun;
+import com.microanswer.qiqubaike.other.Tool;
 import com.microanswer.qiqubaike.viewholder.ItemHolder;
+import com.microanswer.qiqubaike.viewholder.ItemHolderGif;
+import com.microanswer.qiqubaike.viewholder.ItemHolderImage;
+import com.microanswer.qiqubaike.viewholder.PLHolder;
+import com.microanswer.qiqubaike.viewholder.PLTypeHolder;
 import com.microanswer.qiqubaike.viewholder.ViewLoadingHolder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,72 +34,119 @@ import java.util.Map;
  */
 
 public class JinXuanDetailActivity extends BaseActivity implements ViewLoadingHolder.OnShouldLoad {
-    private final String TYPE = "epyt";
-    private final String DATA = "atad";
-
-    private RecyclerView recyclerView;
-    private LinearLayoutManager linearLayoutManager;
+    private LayoutInflater inflater;
+    private LinearLayout detailContent;
     private Adpt adapter;
 
-    // 当前要显示的内容id
-    private String jinXuanItemId;
-    private ArrayList<Map<String, Object>> data;
+    // 当前要显示的内容
+    private JinXuanItem jinXuanItem;
+    // 评论数据集合
+    private ArrayList<Object> data;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.jinxuan_detail);
+        inflater = LayoutInflater.from(this);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
+        detailContent = (LinearLayout) findViewById(R.id.detailContent);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
 
-        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
+                false);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        data = new ArrayList<>();
-
-        // 初始化数据只有一个，这一个就是命令加载的数据
-        HashMap<String, Object> loading = new HashMap<>();
-        loading.put(TYPE, "loading");
-        loading.put(DATA, "loading");
-        data.add(loading);
-
         adapter = new Adpt();
+        recyclerView.setAdapter(adapter);
     }
 
-    private boolean isLoading = false; // 是否正在加载内容
-    private boolean isLoadingPL = false; // 是否真正在加载评论
+    private boolean isLoaded = false; // 标记内容是否已经加载
+    private boolean isPLoaded = false; // 标记评论是否已经加载
+    private boolean isLoading = false; // 标记是否正在加载类容
+    private boolean isPLoading = false; // 标记是否正在加载评论类容
+
     @Override
     public void onLoad() {
 
-        if(isLoading || isLoadingPL) {
+        if (isLoaded && isPLoaded) { // 内容和评论都加载了，不用再加载。
             return;
         }
 
         // 获取传入到该页面的内容id
         Intent intent = getIntent();
-        jinXuanItemId = intent.getStringExtra("id");
+        String jinXuanItemId = intent.getStringExtra("id");
 
         // 内容和评论分开同时加载
-
-        if (!isLoading) {
+        if (!isLoaded && !isLoading) { // 如果内容没有加载，则进行加载
             isLoading = true;
-            QiquApi.getJinXuanContent(jinXuanItemId).then(new Fun() {
+            QiquApi.getJinXuanDetail(jinXuanItemId).then(new Fun() {
                 @Override
                 public Object d0(Object obj) throws Throwable {
+                    jinXuanItem = (JinXuanItem) obj;
+                    isLoaded = true; // 标记已经加载了。
+                    isLoading = false; // 标记加载完成了
 
-                    isLoading = false;
+                    // 判断Item类型， 架子啊不同的View显示
+                    JinXuanItem item = jinXuanItem;
+                    int viewType = R.layout.jinxuan_item_text;
+                    if (item.getItem_type() == 0) {
+                        // 图片内容【可能是静态图，可能是gif】
+                        List<JinXuanItem.Images> images = item.getImages();
+                        if (images.size() >= 1) {
+                            JinXuanItem.Images images1 = images.get(0);
+                            if ("GIF".equals(images1.getType()) || "gif".equals(images1.getType())) {
+                                viewType = R.layout.jinxuan_item_gif;
+                            } else {
+                                viewType = R.layout.jinxuan_item_image;
+                            }
+                        } else {
+                            // 这条内容，是图片内容，可是却没有图片
+                            viewType = R.layout.jinxuan_item_image;
+                        }
+                    } else if (item.getItem_type() == 1) {
+                        viewType = R.layout.jinxuan_item_text;
+                    }
+
+                    ItemHolder itemHolder = null;
+                    View v = inflater.inflate(viewType, detailContent, false);
+                    if (viewType == R.layout.jinxuan_item_text) {
+                        // 加载文本item
+                        itemHolder = new ItemHolder(v);
+                    } else if (viewType == R.layout.jinxuan_item_gif) {
+                        itemHolder = new ItemHolderGif(v);
+                    } else if (viewType == R.layout.jinxuan_item_image) {
+                        itemHolder = new ItemHolderImage(v);
+                    }
+                    itemHolder.init(JinXuanDetailActivity.this);
+                    itemHolder.bind(1, jinXuanItem);
+                    itemHolder.hideSPL();
+                    detailContent.addView(v);
                     return null;
                 }
             }).promise();
         }
 
-        if (!isLoadingPL) {
-            isLoadingPL = true;
+        if (!isPLoaded && !isPLoading) {
+            isPLoaded = true;
             QiquApi.getJinXuanPinLun(jinXuanItemId).then(new Fun() {
                 @Override
                 public Object d0(Object obj) throws Throwable {
-
-                    isLoadingPL = false;
+                    Map<String, ArrayList<JinXuanComment>> d =
+                            (Map<String, ArrayList<JinXuanComment>>) obj;
+                    ArrayList<JinXuanComment> hotcomments = d.get("hotcomments");
+                    ArrayList<JinXuanComment> comments = d.get("comments");
+                    isPLoaded = true;
+                    isPLoading = false;
+                    data = new ArrayList<>();
+                    if (hotcomments.size() > 0) {
+                        data.add("spl_" + hotcomments.size());
+                        data.addAll(hotcomments);
+                    }
+                    if (comments.size() > 0) {
+                        data.add("pl_" + comments.size());
+                        data.addAll(comments);
+                    }
+                    adapter.notifyDataSetChanged();
                     return null;
                 }
             }).promise();
@@ -104,67 +154,88 @@ public class JinXuanDetailActivity extends BaseActivity implements ViewLoadingHo
 
     }
 
-    private class Adpt extends RecyclerView.Adapter<ItemHolder> {
+    private class Adpt extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         private LayoutInflater layoutInflater;
 
         @Override
-        public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             if (null == layoutInflater) {
                 layoutInflater = LayoutInflater.from(parent.getContext());
             }
 
             View v = layoutInflater.inflate(viewType, parent, false);
-            ItemHolder itemViewHolder = null;
+            RecyclerView.ViewHolder itemViewHolder = null;
 
             if (viewType == R.layout.view_loading) {
                 ViewLoadingHolder vlh = new ViewLoadingHolder(v);
                 vlh.setOnShouldLoad(JinXuanDetailActivity.this);
+                vlh.init(parent.getContext());
                 itemViewHolder = vlh;
+            } else if (viewType == R.layout.view_pl) {
+                itemViewHolder = new PLHolder(v);
+            } else if (viewType == R.layout.view_pl_type) {
+                itemViewHolder = new PLTypeHolder(v);
             }
 
-            return itemViewHolder.init(parent.getContext());
+            return itemViewHolder;
         }
 
         @Override
-        public void onBindViewHolder(ItemHolder holder, int position) {
-            holder.bind(position, null);
+        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+            if (holder instanceof ViewLoadingHolder) {
+                ViewLoadingHolder loadingHolder = (ViewLoadingHolder) holder;
+                loadingHolder.bind(position, null);
+            } else {
+                Object value = data.get(position);
+                if (holder instanceof PLTypeHolder) {
+                    PLTypeHolder plTypeHolder = (PLTypeHolder) holder;
+                    if (value instanceof String) {
+                        String[] vs = value.toString().split("_");
+                        plTypeHolder.pltypeimg.setImageResource("spl".equals(vs[0]) ? R.drawable.ic_spl : R.drawable.ic_pll);
+                        plTypeHolder.count.setText("(" + vs[1] + ")");
+                    }
+                } else if (holder instanceof PLHolder) {
+                    PLHolder plHolder = (PLHolder) holder;
+
+                    if (value instanceof JinXuanComment) {
+                        JinXuanComment jinXuanComment = (JinXuanComment) value;
+
+                        Glide.with(JinXuanDetailActivity.this)
+                                .load(jinXuanComment.getAuthor_avatar())
+                                .into(plHolder.head);
+
+                        plHolder.name.setText(jinXuanComment.getAuthor());
+                        plHolder.plcontent.setText(Tool.formatUcText(JinXuanDetailActivity.this, jinXuanComment.getContent()));
+                        plHolder.zhancount.setText(String.valueOf(jinXuanComment.getLike()));
+                    }
+
+                }
+            }
         }
 
         @Override
         public int getItemViewType(int position) {
-            Map<String, Object> stringObjectMap = data.get(position);
-            Object o = stringObjectMap.get(TYPE);
-
-            if ("loading".equals(o)) {
+            if (getItemCount() == 1) {
+                // 只有一个view， 显示加载
                 return R.layout.view_loading;
-            } else if ("datacontent".equals(o)) {
-
-                // JinXuanItem item = items.get(position - 1);
-                // if (item.getItem_type() == 0) {
-                //     // 图片内容【可能是静态图，可能是gif】
-                //     List<JinXuanItem.Images> images = item.getImages();
-                //     if (images.size() >= 1) {
-                //         JinXuanItem.Images images1 = images.get(0);
-                //         if ("GIF".equals(images1.getType()) || "gif".equals(images1.getType())) {
-                //             return R.layout.jinxuan_item_gif;
-                //         } else {
-                //             return R.layout.jinxuan_item_image;
-                //         }
-                //     } else {
-                //         // 这条内容，是图片内容，可是却没有图片
-                //         return R.layout.jinxuan_item_image;
-                //     }
-                // } else if (item.getItem_type() == 1) {
-                //     return R.layout.jinxuan_item_text;
-                // }
+            } else {
+                Object item = data.get(position);
+                if (item instanceof String) {
+                    return R.layout.view_pl_type;
+                } else {
+                    return R.layout.view_pl;
+                }
             }
-            return 0;
         }
 
         @Override
         public int getItemCount() {
-            return data.size();
+            if (null == data || data.size() < 1) {
+                return 1;
+            } else {
+                return data.size();
+            }
         }
     }
 
